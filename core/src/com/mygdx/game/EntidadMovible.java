@@ -9,9 +9,10 @@ public class EntidadMovible extends Sprite{
     private int x, y; // Posicion en el grid
     private float x_real, y_real; // Posicion real en la pantalla
     private int x_destino, y_destino; // Posicion destino en el grid
+    private boolean movimientoDiagonal;
     private SpriteBatch batch;
 
-    EntidadMovible(Texture texture, int x, int y, SpriteBatch batch){
+    EntidadMovible(Texture texture, int x, int y, SpriteBatch batch, boolean movimientoDiagonal){
         super(texture);
         super.setSize(30, 30);
         super.setPosition(x, y);
@@ -20,6 +21,7 @@ public class EntidadMovible extends Sprite{
         this.x_real = x;
         this.y_real = y;
         this.batch = batch;
+        this.movimientoDiagonal = movimientoDiagonal;
     }
 
     public void setPosicion(int x, int y){
@@ -73,7 +75,7 @@ public class EntidadMovible extends Sprite{
     }
 
     public void startEntidad(){
-        EntidadMovibleThread thread = new EntidadMovibleThread(this);
+        EntidadMovibleThread thread = new EntidadMovibleThread(this, movimientoDiagonal);
         thread.start();
     }
 

@@ -34,7 +34,7 @@ public class TheWalkingTec extends ApplicationAdapter {
 	public void create () {
 		// SpriteBatch is used to draw 2D images
 		batch = new SpriteBatch();
-		zombie = new EntidadMovible(new Texture("zombie.png"), 100, 0, batch);
+		zombie = new EntidadMovible(new Texture("zombie.png"), 100, 0, batch, true);
 		// animation = GifDecoder.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal("zombie.gif").read());
 		// We initialize the camera
 		camera = new OrthographicCamera();
@@ -47,7 +47,7 @@ public class TheWalkingTec extends ApplicationAdapter {
 		grid = new GameGrid(batch, viewport);
 		// We initialize the zombie
 		for (int i = 0; i < 10; i++) {
-			zombies.add(new EntidadMovible(new Texture("zombie.png"), x, y, batch));
+			zombies.add(new EntidadMovible(new Texture("zombie.png"), x, y, batch, i % 2 == 0));
 			x += 50;
 			y += 50;
 			zombies.get(i).setDestino(829, 450);
