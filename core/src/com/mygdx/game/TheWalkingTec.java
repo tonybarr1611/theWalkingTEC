@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.mygdx.game.Componentes.Defensa.DefensaBloque;
 
 public class TheWalkingTec extends ApplicationAdapter {
 	private SpriteBatch batch;
@@ -25,16 +26,18 @@ public class TheWalkingTec extends ApplicationAdapter {
 	Animation<TextureRegion> animation;
 	private GameGrid grid;
 	EntidadMovible zombie;
-	int x = 0;
+	int x = 100;
 	int y = 0;
 	ArrayList<EntidadMovible> zombies = new ArrayList<EntidadMovible>();
+	Partida partida;
 
 	
 	@Override
 	public void create () {
 		// SpriteBatch is used to draw 2D images
 		batch = new SpriteBatch();
-		zombie = new EntidadMovible(new Texture("zombie.png"), 100, 0, batch, true);
+		partida = new Partida(grid, 1);
+		zombie = new EntidadMovible(new Texture("zombie.png"), 490, 600, batch, true, partida, new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1));
 		// animation = GifDecoder.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal("zombie.gif").read());
 		// We initialize the camera
 		camera = new OrthographicCamera();
@@ -47,12 +50,25 @@ public class TheWalkingTec extends ApplicationAdapter {
 		grid = new GameGrid(batch, viewport);
 		// We initialize the zombie
 		for (int i = 0; i < 10; i++) {
-			zombies.add(new EntidadMovible(new Texture("zombie.png"), x, y, batch, i % 2 == 0));
-			x += 50;
-			y += 50;
-			zombies.get(i).setDestino(829, 450);
-			zombies.get(i).startEntidad();
+			DefensaBloque defensa = new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1);
+			EntidadMovible entidad = new EntidadMovible(new Texture("zombie.png"), x, y, batch, i % 2 == 0, partida, defensa);
+			defensa.setEntidad(entidad);
+			defensa.setPartida(partida);
+			if (partida.addDefensa(entidad)){
+				zombies.add(entidad);
+				if (zombies.size() == 1)
+					entidad.setDestino(829, 450);
+				else 
+					entidad.setDestino(830, 600);
+				System.out.println("Se agrego el zombie" + i);
+			}
+			if (i % 2 == 0){
+				x += 50;
+				y += 50;
+			}
+			// zombies.get(i).startEntidad();
 		}
+		partida.startGame();
 	}
 	float ratio = 850 / 850;
 
@@ -66,13 +82,14 @@ public class TheWalkingTec extends ApplicationAdapter {
 		grid.render();
 		// We draw the zombie
 		batch.begin();
-		for (int i = 0; i < 10; i++) {
+		zombie.draw(batch);
+		for (int i = 0; i < zombies.size(); i++) {
 			zombies.get(i).draw(batch);
 			if (zombies.get(i).getPosicionX() == zombies.get(i).getDestinoX() && zombies.get(i).getPosicionY() == zombies.get(i).getDestinoY()) {
-				if (zombies.get(i).getDestinoX() == 829)
-					zombies.get(i).setDestino(0, 0);
-				else
-					zombies.get(i).setDestino(829, 600);
+				// if (zombies.get(i).getDestinoX() == 829)
+				// 	zombies.get(i).setDestino(0, 0);
+				// else
+				// 	zombies.get(i).setDestino(829, 600);
 			}
 		}
 		batch.end();
