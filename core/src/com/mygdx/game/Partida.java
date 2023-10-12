@@ -22,6 +22,14 @@ public class Partida {
         return gridComponentes[x][y] == null;
     }
 
+    public boolean verificarCasilla(int x, int y, Componente componente){
+        if (x < 0 || x > 24 || y < 0 || y > 24)
+            return false;
+        if (gridComponentes[x][y] == componente)
+            return true;
+        return gridComponentes[x][y] == null;
+    }
+
     public boolean placeDefensa(Componente componente, int x, int y){
         if (!verificarCasilla(x, y))
         return false;
@@ -72,6 +80,10 @@ public class Partida {
 
     public void setNivel(int nivel){
         this.nivel = nivel;
+    }
+
+    public Componente[][] getGridComponentes(){
+        return gridComponentes;
     }
 
 

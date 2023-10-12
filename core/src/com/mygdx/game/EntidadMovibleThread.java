@@ -63,8 +63,12 @@ public class EntidadMovibleThread extends Thread{
             else
                 hasMoved = entidad.setPosicionReal((float)0, -speed);
         }
-        if (entidad.getDestinoX() == 829)
-            System.out.println("x_real: " + x_real + " y_real: " + y_real + " x_destino: " + x_destino + " y_destino: " + y_destino + " x: " + x + " y: " + y);
+        if (x_real == x_destino && y_real == y_destino){
+            int x_casilla = Math.round((x_destino - 100) / 30);
+            int y_casilla = Math.round(y_destino / 30);
+            entidad.setX(Math.round(x_casilla * 30 + 100));
+            entidad.setY(Math.round(y_casilla * 30));
+        }
         updateValues();
     }
 

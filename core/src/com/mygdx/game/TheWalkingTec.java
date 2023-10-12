@@ -50,7 +50,7 @@ public class TheWalkingTec extends ApplicationAdapter {
 		grid = new GameGrid(batch, viewport);
 		// We initialize the zombie
 		for (int i = 0; i < 10; i++) {
-			DefensaBloque defensa = new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1);
+			DefensaBloque defensa = new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), i, 1, 1, 1, 1);
 			EntidadMovible entidad = new EntidadMovible(new Texture("zombie.png"), x, y, batch, i % 2 == 0, partida, defensa);
 			defensa.setEntidad(entidad);
 			defensa.setPartida(partida);

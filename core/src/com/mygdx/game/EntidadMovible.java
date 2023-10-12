@@ -34,18 +34,50 @@ public class EntidadMovible extends Sprite{
     }
     
     public boolean setPosicionReal(float x, float y){
+        int casilla_x_actual = Math.round((Math.round(x_real)-100)/30);
         int casilla_x = Math.round((Math.round(x_real += x)-100)/30); // Esta formula es la interpolacion del grid en el eje x
         int casilla_y = Math.round((Math.round(y_real += y))/30); // Esta formula es la interpolacion del grid en el eje y
-        if (partida.verificarCasilla(casilla_x, casilla_y)){
+        int casilla_y_actual = Math.round((Math.round(y_real))/30);
+        if (partida.verificarCasilla(casilla_x, casilla_y, entidad)){
             super.translate(x, y);
             x_real = super.getX();
             y_real = super.getY();
+            Componente[][] gridComponentes = partida.getGridComponentes();
+            for (int i = 0; i < 25; i++){
+                for (int j = 0; j < 25; j++){
+                    if (gridComponentes[i][j] == entidad){
+                        gridComponentes[i][j] = null;
+                        break;
+                    }
+                }
+            }
+            gridComponentes[casilla_x][casilla_y] = entidad;
             return true;
         }
+        Componente[][] gridComponentes = partida.getGridComponentes();
+        for (int i = 0; i < 25; i++){
+            for (int j = 0; j < 25; j++){
+                if (gridComponentes[i][j] == entidad){
+                    super.setX(i * 30 + 100);
+                    super.setY(j * 30);
+                    break;
+                }
+            }
+        }
+        this.x_real = casilla_x_actual * 30 + 100;
+        this.y_real = casilla_y_actual * 30;
         return false;
     }
 
     public void setDestino(int x, int y){
+        if (x < 100)
+            x = 100;
+        if (x > 820)
+            x = 820;
+        if (y < 0)
+            y = 0;
+        if (y > 720)
+            y = 720;
         this.x_destino = x;
         this.y_destino = y;
     }
@@ -89,7 +121,7 @@ public class EntidadMovible extends Sprite{
     }
 
     public void startEntidad(){
-        EntidadMovibleThread thread = new EntidadMovibleThread(this, movimientoDiagonal, (float)2, partida);
+        EntidadMovibleThread thread = new EntidadMovibleThread(this, movimientoDiagonal, (float)entidad.getVida() + 3, partida);
         thread.start();
     }
 
