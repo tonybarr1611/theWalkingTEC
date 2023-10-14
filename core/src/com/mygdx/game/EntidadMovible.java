@@ -66,6 +66,8 @@ public class EntidadMovible extends Sprite{
         }
         this.x_real = casilla_x_actual * 30 + 100;
         this.y_real = casilla_y_actual * 30;
+        this.x_destino = (int)this.x_real;
+        this.y_destino = (int)this.y_real;
         return false;
     }
 

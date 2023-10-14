@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -44,6 +46,7 @@ public class MenuOpciones {
     // Partida object
     Partida partida;
     Texture tex;
+    ArrayList<EntidadMovible> defensas = new ArrayList<EntidadMovible>();
 
 
     public MenuOpciones(Stage stage, SpriteBatch batch, Partida partida){
@@ -58,7 +61,7 @@ public class MenuOpciones {
         botonCargar = new Button(skinBotones);
         botonSalir = new Button(skinBotones);
         nombreUsuario = new TextField("", skin);
-        tex = new Texture("zombie.png");
+        tex = new Texture("caja.png");
         draggableImage = new Image(tex);
         draggableImage.setSize(30, 30);
         dragAndDrop = new DragAndDrop();
@@ -92,6 +95,7 @@ public class MenuOpciones {
         dragAndDrop.addSource(new DragAndDrop.Source(draggableImage) {
             @Override
             public Payload dragStart(InputEvent inputevent, float x, float y, int pointer) {
+                System.out.println("Drag start");
                 DragAndDrop.Payload payload = new DragAndDrop.Payload();
                 payload.setDragActor(draggableImage);
                 dragAndDrop.setDragActorPosition(getActor().getWidth()/2, -getActor().getHeight()/2);
@@ -100,26 +104,25 @@ public class MenuOpciones {
 
             @Override
             public void dragStop(InputEvent inputevent, float x, float y, int pointer, Payload payload, Target target) {
-                System.out.println("x: " + getActor().getX() + " y: " + getActor().getY());
-                int x_casilla = Math.round((getActor().getX() - 100) / 30);
-                int y_casilla = Math.round(getActor().getY() / 30);
-                System.out.println("x_casilla: " + x_casilla + " y_casilla: " + y_casilla);
-                if (x_casilla < 0 || x_casilla > 24 || y_casilla < 0 || y_casilla > 24){
-                    dragAndDrop.setDragActorPosition(100, 700);
-                    System.out.println("No se puede colocar en esa casilla");
-                    return;
+                int pos_x = (int)getActor().getX();
+                int pos_y = (int)getActor().getY();
+                int casilla_x = Math.round((pos_x-100)/30);
+                int casilla_y = Math.round((pos_y)/30);
+                System.out.println("Posicion " + pos_x + " " + pos_y);
+                System.out.println("Casillas " + casilla_x + " " + casilla_y);
+
+                DefensaBloque defensa = new DefensaBloque("Dragged", "GIF", new ArrayList<String>(), 100, 1, 1, 1, 1);
+                EntidadMovible entidad = new EntidadMovible(tex, pos_x, pos_y, batch, true, partida, defensa);
+                defensa.setEntidad(entidad);
+                defensa.setPartida(partida);
+                if (partida.addDefensa(entidad)){
+                    defensas.add(entidad);
+                    entidad.setX(casilla_x*30+100);
+                    entidad.setY(casilla_y*30);
+                    System.out.println("done");
                 }
-                if (gridComponentes[x_casilla][y_casilla] == null){
-                    DefensaBloque defensa = new DefensaBloque();
-                    EntidadMovible entidad = new EntidadMovible(tex, x_casilla, y_casilla, batch, true, partida, defensa);
-                    defensa.setEntidad(entidad);
-                    defensa.setPartida(partida);
-                    entidad.setPosicion(x_casilla, y_casilla);
-                    entidad.setPosicionReal(getActor().getX(), getActor().getY());
-                    partida.addDefensa(entidad);
-                    entidad.startEntidad();
-                    dragAndDrop.setDragActorPosition(100, 700);
-                }
+                dragAndDrop.setDragActorPosition(100, 700);
+                draggableImage.setPosition(100, 700);
             }
 
         });
@@ -137,5 +140,10 @@ public class MenuOpciones {
     public void renderMenu(){
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+        batch.begin();
+        for (int i = 0; i < defensas.size(); i++) {
+            defensas.get(i).draw(batch);
+        }
+        batch.end();
     }
 }

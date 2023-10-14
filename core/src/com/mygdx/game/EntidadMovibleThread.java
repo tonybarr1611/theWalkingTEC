@@ -43,16 +43,16 @@ public class EntidadMovibleThread extends Thread{
     private void update(){
         boolean hasMoved = false;
         if((x_real < x_destino || x < x_destino) && (!hasMoved || movimientoDiagonal)){ // La segunda condicion es una implicacion logica
-            if(x_real + speed >= x_destino)
+            if(x_real+ speed >= x_destino)
                 hasMoved = entidad.setPosicionReal(x_destino - x_real, (float)0);
             else
                 hasMoved = entidad.setPosicionReal(speed, (float)0);
-        }else if((x_real - 2 > x_destino || x > x_destino) && (!hasMoved || movimientoDiagonal)){
+        }else if((x_real > x_destino || x > x_destino) && (!hasMoved || movimientoDiagonal)){
             if(x_real - x_destino <= speed)
                 hasMoved = entidad.setPosicionReal(-(x_real - x_destino), (float)0);
             else
                 hasMoved = entidad.setPosicionReal(-speed, (float)0);
-        }if((y_real - 2 < y_destino || y < y_destino) && (!hasMoved || movimientoDiagonal)){
+        }if((y_real< y_destino || y < y_destino) && (!hasMoved || movimientoDiagonal)){
             if(y_real + speed >= y_destino)
                 hasMoved = entidad.setPosicionReal((float)0, y_destino - y_real);
             else

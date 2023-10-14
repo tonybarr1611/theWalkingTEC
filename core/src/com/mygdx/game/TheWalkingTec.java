@@ -71,6 +71,12 @@ public class TheWalkingTec extends ApplicationAdapter {
 			// zombies.get(i).startEntidad();
 		}
 		partida.startGame();
+		menu = new MenuOpciones(grid.getStage(), batch, partida);
+		menu.create();
+		Array<String> defensas = new Array<String>();
+		defensas.add("Bloque");
+		defensas.add("Arma");
+		menu.setDefensasDisponibles(defensas);
 	}
 	float ratio = 850 / 850;
 
