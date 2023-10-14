@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.Componentes.Defensa.DefensaBloque;
@@ -30,6 +31,7 @@ public class TheWalkingTec extends ApplicationAdapter {
 	int y = 0;
 	ArrayList<EntidadMovible> zombies = new ArrayList<EntidadMovible>();
 	Partida partida;
+	MenuOpciones menu;
 
 	
 	@Override
@@ -80,6 +82,7 @@ public class TheWalkingTec extends ApplicationAdapter {
 		camera.update();
 		// We render the grid
 		grid.render();
+		menu.renderMenu();
 		// We draw the zombie
 		batch.begin();
 		zombie.draw(batch);
