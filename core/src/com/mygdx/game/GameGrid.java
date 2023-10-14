@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -46,11 +47,14 @@ public class GameGrid{
         // We update the buttons
 		for(int y = 0; y < 25; y++){
 			for(int x = 0; x < 25; x++){
-				ImageButton button = (ImageButton)stage.getActors().get(x + y * 25);
-				button.setX(x * squareWidth + 100);
-				button.setY(y * squareHeight);
-				button.setWidth(30);
-				button.setHeight(30);
+				Actor actors = stage.getActors().get(x + y * 25);
+				if (actors instanceof ImageButton){
+					ImageButton button = (ImageButton)actors;
+					button.setX(x * squareWidth + 100);
+					button.setY(y * squareHeight);
+					button.setWidth(30);
+					button.setHeight(30);
+				}
 			}
 		}
         // We draw the stage
@@ -63,4 +67,8 @@ public class GameGrid{
         img2.dispose();
         stage.dispose();
     }
+
+	public Stage getStage(){
+		return stage;
+	}
 }

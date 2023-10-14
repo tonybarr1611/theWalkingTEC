@@ -17,4 +17,8 @@ public class DefensaBloque extends Bloque {
     public DefensaBloque(String nombre, String tipoApariencia, ArrayList<String> sprites, int vida, int cantidadGolpes, int nivel, int campos, int nivelAparicion){
         super(nombre, tipoApariencia, sprites, vida, cantidadGolpes, nivel, campos, nivelAparicion);
     }
+
+    public DefensaBloque(){
+        super("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1);
+    }
 }
