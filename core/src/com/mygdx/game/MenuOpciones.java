@@ -45,7 +45,9 @@ public class MenuOpciones {
     SpriteBatch batch;
     // Partida object
     Partida partida;
+    // Texture for the draggable sprite
     Texture tex;
+    // Array of defensas
     ArrayList<EntidadMovible> defensas = new ArrayList<EntidadMovible>();
 
 
@@ -61,34 +63,34 @@ public class MenuOpciones {
         botonCargar = new Button(skinBotones);
         botonSalir = new Button(skinBotones);
         nombreUsuario = new TextField("", skin);
-        tex = new Texture("caja.png");
+        tex = new Texture("zombie.png");
         draggableImage = new Image(tex);
         draggableImage.setSize(30, 30);
         dragAndDrop = new DragAndDrop();
         gridComponentes = partida.getGridComponentes();
 
         stage.addActor(defensasDisponibles);
-        defensasDisponibles.setX(100);
-        defensasDisponibles.setY(600);
+        defensasDisponibles.setX(500);
+        defensasDisponibles.setY(780);
         defensasDisponibles.setWidth(150);
         stage.addActor(botonIniciar);
-        botonIniciar.setX(100);
+        botonIniciar.setX(10);
         botonIniciar.setY(100);
         stage.addActor(botonGuardar);
-        botonGuardar.setX(100);
+        botonGuardar.setX(10);
         botonGuardar.setY(200);
         stage.addActor(botonCargar);
-        botonCargar.setX(100);
+        botonCargar.setX(10);
         botonCargar.setY(300);
         stage.addActor(botonSalir);
-        botonSalir.setX(100);
+        botonSalir.setX(10);
         botonSalir.setY(400);
         stage.addActor(nombreUsuario);
-        nombreUsuario.setX(100);
+        nombreUsuario.setX(10);
         nombreUsuario.setY(500);
         stage.addActor(draggableImage);
-        draggableImage.setX(100);
-        draggableImage.setY(700);
+        draggableImage.setX(400);
+        draggableImage.setY(780);
     }
 
     public void create(){
@@ -121,11 +123,46 @@ public class MenuOpciones {
                     entidad.setY(casilla_y*30);
                     System.out.println("done");
                 }
-                dragAndDrop.setDragActorPosition(100, 700);
-                draggableImage.setPosition(100, 700);
+                dragAndDrop.setDragActorPosition(400, 780);
+                draggableImage.setPosition(400, 780);
+                
             }
 
-        });
+        }
+        );
+
+        botonIniciar.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                System.out.println("Iniciar");
+            }
+        }
+        );
+
+        botonGuardar.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                System.out.println("Guardar");
+            }
+        }
+        );
+
+        botonCargar.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                System.out.println("Cargar");
+            }
+        }
+        );
+
+        botonSalir.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                System.out.println("Salir");
+            }
+        }
+        );
+
     }
 
     public void setGridComponentes(Componente[][] gridComponentes){
