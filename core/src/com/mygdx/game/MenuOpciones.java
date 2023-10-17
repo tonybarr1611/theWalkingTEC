@@ -11,8 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
@@ -49,12 +51,19 @@ public class MenuOpciones {
     Texture tex;
     // Array of defensas
     ArrayList<EntidadMovible> defensas = new ArrayList<EntidadMovible>();
+    // Espacios ejercito
+    int espaciosEjercitoOcupados = 0;
+    int espaciosEjercitoDisponibles = 20;
+    Label espaciosEjercito;
+
+    dragabbleImage dragabbleImagee;
 
 
     public MenuOpciones(Stage stage, SpriteBatch batch, Partida partida){
         this.stage = stage;
         this.batch = batch;
         this.partida = partida;
+        this.espaciosEjercitoDisponibles = partida.getEspaciosEjercitos();
         Skin skin = new Skin(Gdx.files.internal("theWalkingTEC\\core\\src\\com\\mygdx\\game\\Skins\\Glassy\\glassy-ui.json"));
         Skin skinBotones = new Skin(Gdx.files.internal("theWalkingTEC\\core\\src\\com\\mygdx\\game\\Skins\\Arcade\\arcade-ui.json"));
         defensasDisponibles = new SelectBox<String>(skin);
@@ -67,10 +76,15 @@ public class MenuOpciones {
         draggableImage = new Image(tex);
         draggableImage.setSize(30, 30);
         dragAndDrop = new DragAndDrop();
-        gridComponentes = partida.getGridComponentes();
+        dragabbleImagee = new dragabbleImage(draggableImage, dragAndDrop, partida, defensas, batch, tex);
 
+        gridComponentes = partida.getGridComponentes();
+        espaciosEjercito = new Label("Espacios ejercito: " + espaciosEjercitoOcupados + "/" + espaciosEjercitoDisponibles, skin);
+    }
+    
+    public void create(){
         stage.addActor(defensasDisponibles);
-        defensasDisponibles.setX(500);
+        defensasDisponibles.setX(450);
         defensasDisponibles.setY(780);
         defensasDisponibles.setWidth(150);
         stage.addActor(botonIniciar);
@@ -87,54 +101,22 @@ public class MenuOpciones {
         botonSalir.setY(400);
         stage.addActor(nombreUsuario);
         nombreUsuario.setX(10);
-        nombreUsuario.setY(500);
+        nombreUsuario.setY(780);
         stage.addActor(draggableImage);
-        draggableImage.setX(400);
+        draggableImage.setX(350);
         draggableImage.setY(780);
-    }
-
-    public void create(){
-        dragAndDrop.addSource(new DragAndDrop.Source(draggableImage) {
-            @Override
-            public Payload dragStart(InputEvent inputevent, float x, float y, int pointer) {
-                System.out.println("Drag start");
-                DragAndDrop.Payload payload = new DragAndDrop.Payload();
-                payload.setDragActor(draggableImage);
-                dragAndDrop.setDragActorPosition(getActor().getWidth()/2, -getActor().getHeight()/2);
-                return payload;
-            }
-
-            @Override
-            public void dragStop(InputEvent inputevent, float x, float y, int pointer, Payload payload, Target target) {
-                int pos_x = (int)getActor().getX();
-                int pos_y = (int)getActor().getY();
-                int casilla_x = Math.round((pos_x-100)/30);
-                int casilla_y = Math.round((pos_y)/30);
-                System.out.println("Posicion " + pos_x + " " + pos_y);
-                System.out.println("Casillas " + casilla_x + " " + casilla_y);
-
-                DefensaBloque defensa = new DefensaBloque("Dragged", "GIF", new ArrayList<String>(), 100, 1, 1, 1, 1);
-                EntidadMovible entidad = new EntidadMovible(tex, pos_x, pos_y, batch, true, partida, defensa);
-                defensa.setEntidad(entidad);
-                defensa.setPartida(partida);
-                if (partida.addDefensa(entidad)){
-                    defensas.add(entidad);
-                    entidad.setX(casilla_x*30+100);
-                    entidad.setY(casilla_y*30);
-                    System.out.println("done");
-                }
-                dragAndDrop.setDragActorPosition(400, 780);
-                draggableImage.setPosition(400, 780);
-                
-            }
-
-        }
-        );
+        stage.addActor(espaciosEjercito);
+        espaciosEjercito.setX(620);
+        espaciosEjercito.setY(770);
+        espaciosEjercito.setWidth(150);
+        espaciosEjercito.setHeight(50);
+        dragAndDrop.addSource(dragabbleImagee);
 
         botonIniciar.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("Iniciar");
+                updateDraggable(new Texture("zombie.png"));
             }
         }
         );
@@ -143,6 +125,8 @@ public class MenuOpciones {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("Guardar");
+                updateDraggable(new Texture("caja.png"));
+                
             }
         }
         );
@@ -182,5 +166,17 @@ public class MenuOpciones {
             defensas.get(i).draw(batch);
         }
         batch.end();
+    }
+
+    private void updateDraggable(Texture texNueva){
+        draggableImage.remove();
+        draggableImage = new Image(texNueva);
+        draggableImage.setSize(30, 30);
+        draggableImage.setPosition(350, 780);
+        stage.addActor(draggableImage);
+        dragAndDrop.clear();
+        dragAndDrop = new DragAndDrop();
+        dragabbleImagee = new dragabbleImage(draggableImage, dragAndDrop, partida, defensas, batch, texNueva);
+        dragAndDrop.addSource(dragabbleImagee);
     }
 }

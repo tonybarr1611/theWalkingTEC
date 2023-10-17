@@ -10,10 +10,12 @@ public class Partida {
     private ArrayList<Componente> zombies = new ArrayList<Componente>();
     private ArrayList<Componente> defensas = new ArrayList<Componente>();
     private int nivel;
+    private int espaciosEjercitos = 20;
     
     public Partida(GameGrid grid, int nivel){
         this.grid = grid;
         this.nivel = nivel;
+        this.espaciosEjercitos = 20 + (nivel - 1) * 5;
     }
     
     public boolean verificarCasilla(int x, int y){
@@ -86,6 +88,9 @@ public class Partida {
         return gridComponentes;
     }
 
+    public int getEspaciosEjercitos(){
+        return espaciosEjercitos;
+    }
 
     public void startGame(){
         for (int i = 0; i < 25; i++){

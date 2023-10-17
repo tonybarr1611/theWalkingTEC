@@ -78,12 +78,11 @@ public class TheWalkingTec extends ApplicationAdapter {
 		defensas.add("Arma");
 		menu.setDefensasDisponibles(defensas);
 	}
-	float ratio = 850 / 850;
 
 	@Override
 	public void render () {
 		// We clear the screen
-		ScreenUtils.clear(0, 0, 0, 1);
+		ScreenUtils.clear(0, (float)0.1, 0, 1);
 		// We update the camera
 		camera.update();
 		// We render the grid
