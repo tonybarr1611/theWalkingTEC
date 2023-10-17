@@ -35,6 +35,8 @@ public class MenuOpciones {
     Button botonCargar;
     // Exit game button
     Button botonSalir;
+    // Buttons labels array
+    Label[] labels = new Label[4];
     // Username text field
     TextField nombreUsuario;
     // Dragabble sprite
@@ -77,6 +79,11 @@ public class MenuOpciones {
         draggableImage.setSize(30, 30);
         dragAndDrop = new DragAndDrop();
         dragabbleImagee = new dragabbleImage(draggableImage, dragAndDrop, partida, defensas, batch, tex);
+        labels = new Label[4];
+        labels[0] = new Label("Iniciar", skin);
+        labels[1] = new Label("Guardar", skin);
+        labels[2] = new Label("Cargar", skin);
+        labels[3] = new Label("Salir", skin);
 
         gridComponentes = partida.getGridComponentes();
         espaciosEjercito = new Label("Espacios ejercito: " + espaciosEjercitoOcupados + "/" + espaciosEjercitoDisponibles, skin);
@@ -111,6 +118,11 @@ public class MenuOpciones {
         espaciosEjercito.setWidth(150);
         espaciosEjercito.setHeight(50);
         dragAndDrop.addSource(dragabbleImagee);
+        for (int i = 0; i < 4; i++) {
+            stage.addActor(labels[i]);
+            labels[i].setX(10);
+            labels[i].setY(75 + i * 100);
+        }
 
         botonIniciar.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
             @Override
