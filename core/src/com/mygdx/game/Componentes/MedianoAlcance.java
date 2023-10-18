@@ -13,20 +13,8 @@ import java.util.ArrayList;
  * @author barra
  */
 public class MedianoAlcance extends Componente{
-    private int alcance;
     
-    public MedianoAlcance(String nombre, String tipoApariencia, ArrayList<String> sprites, int vida, int cantidadGolpes, int nivel, int campos, int nivelAparicion, int alcance){
-        super(nombre, tipoApariencia, sprites, vida, cantidadGolpes, nivel, campos, nivelAparicion);
-        this.alcance = alcance;
-    }
-
-    public int getAlcance() {
-        return alcance;
-    }
-
-    public void setAlcance(int alcance) {
-        if(alcance > 0){
-            this.alcance = alcance;
-        }
+    public MedianoAlcance(String nombre, String tipoApariencia, ArrayList<String> sprites, int vida, int cantidadGolpes, int nivel, int campos, int nivelAparicion, int rango){
+        super(nombre, tipoApariencia, sprites, vida, cantidadGolpes, nivel, campos, nivelAparicion, rango);
     }
 }

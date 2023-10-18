@@ -6,7 +6,12 @@ package com.mygdx.game;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import javax.print.attribute.standard.Media;
+
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
+import com.mycompany.gestorcomponentes.Componentes.ChoqueImpactoPrototipo;
+import com.mycompany.gestorcomponentes.Componentes.MedianoAlcancePrototipo;
 
 /**
  *
@@ -15,11 +20,11 @@ import com.mycompany.gestorcomponentes.ComponentePrototipo;
 public abstract class Componente implements Serializable{
     private String nombre, tipoApariencia;
     private ArrayList<String> sprites;
-    private int vida, cantidadGolpes, nivel, campos, nivelAparicion;
+    private int vida, cantidadGolpes, nivel, campos, nivelAparicion, rango;
     private EntidadMovible entidad;
     private Partida partida;
 
-    public Componente(String nombre, String tipoApariencia, ArrayList<String> sprites, int vida, int cantidadGolpes, int nivel, int campos, int nivelAparicion){
+    public Componente(String nombre, String tipoApariencia, ArrayList<String> sprites, int vida, int cantidadGolpes, int nivel, int campos, int nivelAparicion, int rango){
         this.nombre = nombre;
         this.tipoApariencia = tipoApariencia;
         this.sprites = sprites;
@@ -28,9 +33,10 @@ public abstract class Componente implements Serializable{
         this.nivel = nivel;
         this.campos = campos;
         this.nivelAparicion = nivelAparicion;
+        this.rango = rango;
     }
 
-    public Componente(String nombre, String tipoApariencia, ArrayList<String> sprites, int vida, int cantidadGolpes, int nivel, int campos, int nivelAparicion, Partida partida){
+    public Componente(String nombre, String tipoApariencia, ArrayList<String> sprites, int vida, int cantidadGolpes, int nivel, int campos, int nivelAparicion, int rango, Partida partida){
         this.nombre = nombre;
         this.tipoApariencia = tipoApariencia;
         this.sprites = sprites;
@@ -39,7 +45,28 @@ public abstract class Componente implements Serializable{
         this.nivel = nivel;
         this.campos = campos;
         this.nivelAparicion = nivelAparicion;
+        this.rango = rango;
         this.partida = partida;
+    }
+
+    public Componente(ComponentePrototipo componente, Partida partida){
+        this.nombre = componente.getNombre();
+        this.tipoApariencia = componente.getTipoApariencia();
+        this.sprites = componente.getSprites();
+        this.vida = componente.getVida();
+        this.cantidadGolpes = componente.getCantidadGolpes();
+        this.nivel = componente.getNivel();
+        this.campos = componente.getCampos();
+        this.nivelAparicion = componente.getNivelAparicion();
+        rango = 0;
+        if (componente instanceof ChoqueImpactoPrototipo){
+            ChoqueImpactoPrototipo comp = (ChoqueImpactoPrototipo)componente;
+            this.rango = comp.getRango();
+        }
+        if (componente instanceof MedianoAlcancePrototipo){
+            MedianoAlcancePrototipo comp = (MedianoAlcancePrototipo)componente;
+            this.rango = comp.getAlcance();
+        }
     }
 
     public void setEntidad(EntidadMovible entidad){
