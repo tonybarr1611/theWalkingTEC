@@ -24,8 +24,8 @@ public class GameGrid{
         this.batch = batch;
         this.viewport = viewport;
 		// We load the images from the assets folder
-		img1 = new Texture("grassTexture1.jpg");	
-		img2 = new Texture("grassTexture2.jpg");
+		img1 = new Texture(Gdx.files.internal("grassTexture1.jpg"));	
+		img2 = new Texture(Gdx.files.internal("grassTexture2.jpg"));
         // Initialize the stage
 		stage = new Stage(viewport, batch);
 		Gdx.input.setInputProcessor(stage);

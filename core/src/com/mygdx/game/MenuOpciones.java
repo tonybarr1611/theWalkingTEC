@@ -20,7 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.game.Componentes.Defensa.DefensaBloque;
+import com.mycompany.gestorcomponentes.ComponentePrototipo;
 
 public class MenuOpciones {
     // Stage for the menu

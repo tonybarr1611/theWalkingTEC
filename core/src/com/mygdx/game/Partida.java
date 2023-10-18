@@ -2,7 +2,8 @@ package com.mygdx.game;
 
 import java.util.ArrayList;
 
-import com.mygdx.game.Componentes.Aereo;
+import com.mycompany.gestorcomponentes.ComponentePrototipo;
+
 
 public class Partida {
     private GameGrid grid;

@@ -9,7 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
+import com.mycompany.gestorcomponentes.Componentes.*;
 import com.mygdx.game.Componentes.Defensa.DefensaBloque;
+import com.mycompany.gestorcomponentes.ComponentePrototipo;
 
 public class dragabbleImage extends DragAndDrop.Source{
     Image image;

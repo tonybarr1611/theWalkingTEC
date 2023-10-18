@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.mycompany.gestorcomponentes.ComponentePrototipo;
 import com.mygdx.game.Componentes.Defensa.DefensaBloque;
 
 public class TheWalkingTec extends ApplicationAdapter {

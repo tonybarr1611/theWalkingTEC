@@ -6,6 +6,7 @@ package com.mygdx.game;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import com.mycompany.gestorcomponentes.ComponentePrototipo;
 
 /**
  *
