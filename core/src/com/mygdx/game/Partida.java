@@ -3,6 +3,9 @@ package com.mygdx.game;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -27,7 +30,7 @@ import com.mygdx.game.Componentes.Defensa.DefensaBloque;
 import com.mygdx.game.Componentes.Zombies.*;
 
 
-public class Partida implements Serializable{
+public class Partida{
     private GameGrid grid;
     private Componente[][] gridComponentes = new Componente[25][25];
     private ArrayList<Componente> zombies = new ArrayList<Componente>();
@@ -347,16 +350,42 @@ public class Partida implements Serializable{
         reliquiaMovible.setDestino(12 * 30 + 100, 12 * 30);
     }
 
-    @Override
-    public void write(Json json) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'write'");
-    }
-
-    @Override
-    public void read(Json json, JsonValue jsonData) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'read'");
+    public void saveGame(){
+        String nombreUsuario = menu.getNombreUsuario();
+        if (nombreUsuario == null){
+            Dialog dialog = new Dialog("ERROR", skin);
+            dialog.setColor(Color.BLACK);
+            dialog.text("No se ha ingresado un nombre de usuario.");
+            TextButton button = new TextButton("OK", skin);
+            button.addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Gdx.input.setInputProcessor(grid.getStage());
+                }
+            });
+            dialog.button(button);
+            dialog.show(labelStage);
+            Gdx.input.setInputProcessor(labelStage);
+            dialog.toFront();
+            return;
+        }
+        String currentDir = System.getProperty("user.dir");
+        File filename = new File(currentDir + "/Saves/" + nombreUsuario + ".txt");
+        try{
+            filename.createNewFile();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        if (filename.exists()){
+            FileWriter writer;
+            try{
+                writer = new FileWriter(filename);
+                writer.write(Integer.toString(nivel) + "\n");
+                writer.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 }
 

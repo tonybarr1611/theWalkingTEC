@@ -154,8 +154,7 @@ public class MenuOpciones {
         botonGuardar.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                System.out.println("Guardar");
-                updateDraggable(new Texture("caja.png"));
+                partida.saveGame();
                 
             }
         }
@@ -206,6 +205,10 @@ public class MenuOpciones {
             defensas.get(i).draw(batch);
         }
         batch.end();
+    }
+
+    public String getNombreUsuario(){
+        return nombreUsuario.getText();
     }
 
     private void updateDraggable(Texture texNueva){
