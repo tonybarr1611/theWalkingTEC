@@ -52,7 +52,7 @@ public class dragabbleImage extends DragAndDrop.Source{
             System.out.println("Casillas " + casilla_x + " " + casilla_y);
             // Espacio reservado para zombies
             if (!(casilla_x < 3 || casilla_x > 21 || casilla_y < 3 || casilla_y > 21)){
-                DefensaBloque defensa = new DefensaBloque("Dragged", "GIF", new ArrayList<String>(), 100, 1, 1, 1, 1);
+                DefensaBloque defensa = new DefensaBloque("Dragged", "GIF", new ArrayList<String>(), 100, 1, 1, 1, 1, 1);
                 EntidadMovible entidad = new EntidadMovible(tex, pos_x, pos_y, batch, true, partida, defensa);
                 defensa.setEntidad(entidad);
                 defensa.setPartida(partida);
