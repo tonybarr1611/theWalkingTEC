@@ -24,11 +24,10 @@ public class componentManager extends EntitySerializer{
             if (file.getName().endsWith(".json")){
                 try{
                     ComponentePrototipo componente = (ComponentePrototipo)super.readObject(file.toString());
-                    if (componente.getNombre().contentEquals("Muro")){
-                        defensas.add(componente);
-                    }
-                    else
+                    if (componente.getNombre().contentEquals("Volador"))
                         zombies.add(componente);
+                    else
+                        defensas.add(componente);
                 }catch(Exception e){
                     System.out.println(e.getMessage());
                     System.out.println("Error al cargar componente");

@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -31,22 +32,22 @@ public class TheWalkingTec extends ApplicationAdapter {
 	int x = 100;
 	int y = 0;
 	ArrayList<EntidadMovible> zombies = new ArrayList<EntidadMovible>();
+	ArrayList<EntidadMovible> defensas = new ArrayList<EntidadMovible>();
+	ArrayList<damageLabel> labels = new ArrayList<damageLabel>();
 	Partida partida;
 	MenuOpciones menu;
+	Stage labelStage;
 
 	
 	@Override
 	public void create () {
 		componentManager manager = new componentManager();
-		ArrayList<ComponentePrototipo>[] componentes = manager.getComponents(1);
+		ArrayList<ComponentePrototipo>[] componentes = manager.getComponents(15);
 		System.out.println("hereher");
 		System.out.println(componentes[0].size());
 		System.out.println(componentes[1].size());
 		// SpriteBatch is used to draw 2D images
 		batch = new SpriteBatch();
-		partida = new Partida(grid, 1);
-		zombie = new EntidadMovible(new Texture("zombie.png"), 490, 600, batch, true, partida, new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1, 1));
-		// animation = GifDecoder.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal("zombie.gif").read());
 		// We initialize the camera
 		camera = new OrthographicCamera();
 		viewport = new FitViewport(850, 850, camera);
@@ -56,6 +57,10 @@ public class TheWalkingTec extends ApplicationAdapter {
 		camera.update();	
 		// We initialize the grid
 		grid = new GameGrid(batch, viewport);
+		labelStage = new Stage(viewport, batch);
+		partida = new Partida(batch, grid, 1, componentes[0], defensas, zombies, labelStage);
+		zombie = new EntidadMovible(new Texture("zombie.png"), 490, 600, batch, true, partida, new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1, 1));
+		// animation = GifDecoder.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal("zombie.gif").read());
 		// We initialize the zombie
 		for (int i = 0; i < 10; i++) {
 			DefensaBloque defensa = new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), i, 1, 1, 1, 1, 1);
@@ -76,13 +81,13 @@ public class TheWalkingTec extends ApplicationAdapter {
 			}
 			// zombies.get(i).startEntidad();
 		}
-		partida.startGame();
+		// partida.startGame();
 		menu = new MenuOpciones(grid.getStage(), batch, partida);
 		menu.create();
 		Array<String> defensas = new Array<String>();
 		defensas.add("Bloque");
 		defensas.add("Arma");
-		menu.setDefensasDisponibles(defensas);
+		menu.setDefensasDisponibles(componentes[1]);
 	}
 
 	@Override
@@ -92,21 +97,25 @@ public class TheWalkingTec extends ApplicationAdapter {
 		// We update the camera
 		camera.update();
 		// We render the grid
-		grid.render();
 		menu.renderMenu();
+		grid.render();
 		// We draw the zombie
 		batch.begin();
 		zombie.draw(batch);
-		for (int i = 0; i < zombies.size(); i++) {
-			zombies.get(i).draw(batch);
-			if (zombies.get(i).getPosicionX() == zombies.get(i).getDestinoX() && zombies.get(i).getPosicionY() == zombies.get(i).getDestinoY()) {
-				// if (zombies.get(i).getDestinoX() == 829)
-				// 	zombies.get(i).setDestino(0, 0);
-				// else
-				// 	zombies.get(i).setDestino(829, 600);
+		for (int i = 0; i < zombies.size(); i++)
+		zombies.get(i).draw(batch);
+		for (int i = 0; i < defensas.size(); i++)
+		defensas.get(i).draw(batch);
+		batch.end();
+		Actor[] actors = labelStage.getActors().items;
+		for (int i = 0; i < actors.length; i++) {
+			if (actors[i] instanceof damageLabel){
+				damageLabel label = (damageLabel)actors[i];
+				label.update();
 			}
 		}
-		batch.end();
+		labelStage.act(Gdx.graphics.getDeltaTime());
+		labelStage.draw();
 	}
 	
 	@Override

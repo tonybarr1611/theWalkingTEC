@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,6 +18,7 @@ public class EntidadMovible extends Sprite{
     private SpriteBatch batch;
     private Componente entidad;
     private Partida partida;
+    private ArrayList<String> bitacora = new ArrayList<String>();
 
     EntidadMovible(Texture texture, int x, int y, SpriteBatch batch, boolean movimientoDiagonal, Partida partida, Componente entidad){
         super(texture);
@@ -74,6 +77,10 @@ public class EntidadMovible extends Sprite{
         return false;
     }
 
+    public void agregarBitacora(String mensaje){
+        bitacora.add(mensaje);
+    }
+
     public void setDestino(int x, int y){
         if (x < 100)
             x = 100;
@@ -126,7 +133,7 @@ public class EntidadMovible extends Sprite{
     }
 
     public void startEntidad(){
-        EntidadMovibleThread thread = new EntidadMovibleThread(this, movimientoDiagonal, (float)entidad.getVida() + 3, partida);
+        EntidadMovibleThread thread = new EntidadMovibleThread(this, movimientoDiagonal, 5, partida);
         thread.start();
     }
 

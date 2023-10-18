@@ -1,6 +1,8 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Componentes.Defensa.DefensaAerea;
+import com.mygdx.game.Componentes.Zombies.ZombieAereo;
 
 public class EntidadMovibleThread extends Thread{
     private EntidadMovible entidad;
@@ -72,12 +74,108 @@ public class EntidadMovibleThread extends Thread{
         updateValues();
     }
 
+    private boolean isDefensa(Componente componente){
+        String clase = componente.getClass().getSimpleName();
+        clase = clase.toUpperCase();
+        return clase.contains("DEFENSA");
+    }
+
+    private void searchClosestZombies(){
+        int x_casilla = Math.round((x_real - 100) / 30);
+        int y_casilla = Math.round(y_real / 30);
+        int x_destino = x_casilla;
+        int y_destino = y_casilla;
+        int distancia = 1000;
+        for (int i = 1; i < 25; i++){
+            for (int j = 1; j < 25; j++){
+                if (partida.getGridComponentes()[i][j] != null && isDefensa(partida.getGridComponentes()[i][j])){
+                    if (entidad.getEntidad() instanceof ZombieAereo == partida.getGridComponentes()[i][j] instanceof DefensaAerea){
+                        int distancia_actual = Math.abs(i - x_casilla) + Math.abs(j - y_casilla);
+                        if (distancia_actual < distancia){
+                            distancia = distancia_actual;
+                            x_destino = i;
+                            y_destino = j;
+                        }
+                    }
+                }
+            }
+        }
+        attack(distancia, x_destino, y_destino);
+        x_destino = x_destino * 30 + 100;
+        y_destino = y_destino * 30;
+
+        entidad.setDestino(x_destino, y_destino);
+        updateValues();
+    }
+
+    private void searchClosestDefensas(){
+        int x_casilla = Math.round((x_real - 100) / 30);
+        int y_casilla = Math.round(y_real / 30);
+        int x_destino = x_casilla;
+        int y_destino = y_casilla;
+        int distancia = 1000;
+        for (int i = 1; i < 25; i++){
+            for (int j = 1; j < 25; j++){
+                if (partida.getGridComponentes()[i][j] != null && !isDefensa(partida.getGridComponentes()[i][j])){
+                    if (entidad.getEntidad() instanceof DefensaAerea == partida.getGridComponentes()[i][j] instanceof ZombieAereo){
+                        int distancia_actual = Math.abs(i - x_casilla) + Math.abs(j - y_casilla);
+                        if (distancia_actual < distancia){
+                            distancia = distancia_actual;
+                            x_destino = i;
+                            y_destino = j;
+                        }
+                    }
+                }
+            }
+        }
+        attack(distancia, x_destino, y_destino);
+        updateValues();
+    }
+
+    private void attack(int distancia, int x_destino, int y_destino){
+        if (entidad.getEntidad().getRango() != 0){
+            if (distancia <= entidad.getEntidad().getRango()){
+                Componente defensa = partida.getGridComponentes()[x_destino][y_destino];
+                if (defensa != null){
+                    entidad.getEntidad().atacar(defensa);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        System.out.println("Error al dormir el thread");
+                    }
+                }
+            }
+        }else{
+            if (distancia == 1){
+                Componente defensa = partida.getGridComponentes()[x_destino][y_destino];
+                if (defensa != null){
+                    entidad.getEntidad().atacar(defensa);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        System.out.println("Error al dormir el thread");
+                    }
+                }
+            }
+        }
+    }
+
+
     public void run(){
         System.out.println("Thread running");
         running = true;
         while(running){
+            if (entidad.getEntidad().getVida() <= 0){
+                running = false;
+                break;
+            }
             try{
                 update();
+                if (!isDefensa(entidad.getEntidad()))
+                    searchClosestZombies();
+                else{
+                    searchClosestDefensas();
+                }
                 Thread.sleep(100);
             }catch(InterruptedException e){
                 System.out.println("Thread interrupted");

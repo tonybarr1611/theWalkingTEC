@@ -57,6 +57,13 @@ public class GameGrid{
 				}
 			}
 		}
+		Actor[] actors = stage.getActors().items;
+		for (int i = 0; i < actors.length; i++) {
+			if (actors[i] instanceof damageLabel){
+				damageLabel label = (damageLabel)actors[i];
+				label.update();
+			}
+		}
         // We draw the stage
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();

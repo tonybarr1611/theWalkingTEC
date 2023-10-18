@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import javax.print.attribute.standard.Media;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
 import com.mycompany.gestorcomponentes.Componentes.ChoqueImpactoPrototipo;
 import com.mycompany.gestorcomponentes.Componentes.MedianoAlcancePrototipo;
@@ -69,6 +71,30 @@ public abstract class Componente implements Serializable{
         }
     }
 
+    public void atacar(Componente objetivo){
+        objetivo.recibirDano(cantidadGolpes, this);
+        entidad.agregarBitacora(nombre + " ha atacado a " + objetivo.getNombre() + " por " + cantidadGolpes + " de daño\n");
+        partida.addDamageLabel((int)objetivo.getEntidad().getX() + 20, (int)objetivo.getEntidad().getY() + 20, cantidadGolpes);
+        System.out.println(nombre + " ha atacado a " + objetivo.getNombre() + " por " + cantidadGolpes + " de daño\n");
+    }
+
+    public void recibirDano(int dano, Componente atacante){
+        vida -= dano;
+        if (vida <= 0)
+            morir();
+        entidad.agregarBitacora(nombre + " ha recibido " + dano + " de daño de " + atacante.getNombre() + "\n");
+        System.out.println(nombre + " ha recibido " + dano + " de daño de " + atacante.getNombre() + "\n");
+    }
+
+    public void morir(){
+        // entidad.setTexture(new Texture(Gdx.files.internal("tumba.png")));
+        entidad.setDestino((int)entidad.getX(), (int)entidad.getY());
+        partida.removeEntidad(entidad);
+        entidad.agregarBitacora(nombre + " ha muerto en la posición x: " + Math.round((entidad.getX()+100)/30) + " y: " + Math.round(entidad.getY()/30) + "\n");
+    }
+
+
+    // Getters y Setters
     public void setEntidad(EntidadMovible entidad){
         this.entidad = entidad;
     }
@@ -80,9 +106,7 @@ public abstract class Componente implements Serializable{
     public EntidadMovible getEntidad(){
        return entidad;
     }
-    
 
-    // Getters y Setters
     public String getNombre() {
         return nombre;
     }
@@ -145,5 +169,13 @@ public abstract class Componente implements Serializable{
 
     public void setNivelAparicion(int nivelAparicion) {
         this.nivelAparicion = nivelAparicion;
+    }
+
+    public int getRango(){
+        return rango;
+    }
+
+    public void setRango(int rango){
+        this.rango = rango;
     }
 }
