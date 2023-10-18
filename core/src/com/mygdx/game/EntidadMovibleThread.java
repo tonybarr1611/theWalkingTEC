@@ -129,6 +129,7 @@ public class EntidadMovibleThread extends Thread{
             }
         }
         attack(distancia, x_destino, y_destino);
+        entidad.setDestino(entidad.getPosicionX(), entidad.getPosicionY());
         updateValues();
     }
 

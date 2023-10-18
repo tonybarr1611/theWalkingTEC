@@ -93,6 +93,19 @@ public abstract class Componente implements Serializable{
         entidad.agregarBitacora(nombre + " ha muerto en la posición x: " + Math.round((entidad.getX()+100)/30) + " y: " + Math.round(entidad.getY()/30) + "\n");
     }
 
+    public String toString(){
+        return nombre + " " + tipoApariencia + " " + vida + " " + cantidadGolpes + " " + nivel + " " + campos + " " + nivelAparicion + " " + rango;
+    }
+
+    public String getBitacora(){
+        ArrayList<String> bitacora = entidad.getBitacora();
+        String bitacoraString = "";
+        for (String string : bitacora){
+            bitacoraString += string;
+        }
+        return bitacoraString;
+    }
+
 
     // Getters y Setters
     public void setEntidad(EntidadMovible entidad){

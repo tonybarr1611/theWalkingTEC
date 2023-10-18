@@ -4,11 +4,21 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
+import com.mygdx.game.Componentes.Defensa.DefensaAerea;
+import com.mygdx.game.Componentes.Defensa.DefensaBloque;
 import com.mygdx.game.Componentes.Zombies.*;
 
 
@@ -27,6 +37,8 @@ public class Partida {
     private SpriteBatch batch;
     private Stage labelStage;
     private Skin skin;
+    private DefensaAerea reliquia;
+    private EntidadMovible reliquiaMovible;
 
     
     public Partida(SpriteBatch batch, GameGrid grid, int nivel, ArrayList<ComponentePrototipo> prototipos, ArrayList<EntidadMovible> defensasMovibles, ArrayList<EntidadMovible> zombiesMovibles, Stage labelStage){
@@ -40,6 +52,14 @@ public class Partida {
         this.zombiesMovibles = zombiesMovibles;
         this.labelStage = labelStage;
         this.skin = new Skin(Gdx.files.internal("theWalkingTEC\\core\\src\\com\\mygdx\\game\\Skins\\Glassy\\glassy-ui.json"));
+        ArrayList<String> sprites = new ArrayList<String>();
+        sprites.add("reliquia.png");
+        this.reliquia = new DefensaAerea("Reliquia", "PNG", sprites, 300, 0, 1, 1, 1, 0);
+        this.reliquiaMovible = new EntidadMovible(new Texture(Gdx.files.internal(sprites.get(0))), 12 * 30 + 100, 12 * 30, this.batch, false, this, this.reliquia);
+        reliquia.setEntidad(reliquiaMovible);
+        reliquia.setPartida(this);
+        this.addDefensa(reliquiaMovible);
+        reliquiaMovible.setDestino(12 * 30 + 100, 12 * 30);
     }
     
     public boolean verificarCasilla(int x, int y){
@@ -142,6 +162,8 @@ public class Partida {
         labelStage.addActor(label);
     }
 
+
+
     public void removeEntidad(EntidadMovible entidad){
         String clase = entidad.getEntidad().getClass().getSimpleName().toString();
         clase = clase.toUpperCase();
@@ -160,6 +182,39 @@ public class Partida {
         entidad.getEntidad().setVida(0);
         entidad.setPosition(99999, 9999);
         muertos.add(entidad);
+    }
+
+    public void setGrid(GameGrid grid){
+        this.grid = grid;
+    }
+
+    public void verInformacionCasilla(int x, int y){
+        x = Math.round((x - 100) / 30);
+        y = Math.round(y / 30);
+        if (x < 0 || x > 24 || y < 0 || y > 24)
+            return;
+        if (gridComponentes[x][y] == null)
+            return;
+        System.out.println(gridComponentes[x][y].getNombre());
+        if (gridComponentes[x][y] != null){
+            Componente componente = gridComponentes[x][y];
+            Dialog dialog = new Dialog(componente.getNombre(), skin);
+            dialog.setColor(Color.BLACK);
+            dialog.text(componente.getNombre() + "\n" + componente.getVida() + " HP\n");
+            dialog.text("\n\n");
+            dialog.text(componente.getBitacora());
+            TextButton button = new TextButton("OK", skin);
+            button.addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Gdx.input.setInputProcessor(grid.getStage());
+                }
+            });
+            dialog.button(button);
+            dialog.show(labelStage);
+            Gdx.input.setInputProcessor(labelStage);
+            dialog.toFront();
+        }
     }
 }
 

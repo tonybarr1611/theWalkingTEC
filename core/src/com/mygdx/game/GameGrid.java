@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -16,13 +18,15 @@ public class GameGrid{
 	private Stage stage;
 	private FitViewport viewport;	
 	private Drawable grass1, grass2;
+	private Partida partida;
 
 	private final float squareWidth = (float)30;
 	private final float squareHeight = (float)30;
 
-    GameGrid(SpriteBatch batch, FitViewport viewport){
+    GameGrid(SpriteBatch batch, FitViewport viewport, Partida _partida){
         this.batch = batch;
         this.viewport = viewport;
+		this.partida = _partida;
 		// We load the images from the assets folder
 		img1 = new Texture(Gdx.files.internal("grassTexture1.jpg"));	
 		img2 = new Texture(Gdx.files.internal("grassTexture2.jpg"));
@@ -41,7 +45,21 @@ public class GameGrid{
 					stage.addActor(new ImageButton(grass2, grass1));
 			}
  		}	
-    };
+		for(int y = 0; y < 25; y++){
+			for(int x = 0; x < 25; x++){
+				Actor actors = stage.getActors().get(x + y * 25);
+				if (actors instanceof ImageButton){
+					ImageButton button = (ImageButton)actors;
+					button.addListener(new ClickListener(){
+						@Override
+						public void clicked(InputEvent event, float _x, float _y){
+							partida.verInformacionCasilla((int)event.getStageX(), (int)event.getStageY());
+						}
+					});
+				}
+			}
+		}
+	};
 
     public void render(){
         // We update the buttons

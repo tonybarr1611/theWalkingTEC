@@ -56,9 +56,10 @@ public class TheWalkingTec extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 		camera.update();	
 		// We initialize the grid
-		grid = new GameGrid(batch, viewport);
 		labelStage = new Stage(viewport, batch);
 		partida = new Partida(batch, grid, 1, componentes[0], defensas, zombies, labelStage);
+		grid = new GameGrid(batch, viewport, partida);
+		partida.setGrid(grid);
 		zombie = new EntidadMovible(new Texture("zombie.png"), 490, 600, batch, true, partida, new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1, 1));
 		// animation = GifDecoder.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal("zombie.gif").read());
 		// We initialize the zombie

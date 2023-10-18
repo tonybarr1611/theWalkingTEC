@@ -24,7 +24,9 @@ public class componentManager extends EntitySerializer{
             if (file.getName().endsWith(".json")){
                 try{
                     ComponentePrototipo componente = (ComponentePrototipo)super.readObject(file.toString());
-                    if (componente.getNombre().contentEquals("Volador"))
+                    String clase = componente.getClass().getSimpleName().toString();
+                    clase = clase.toUpperCase();
+                    if (clase.contains("ZOMBIE"))
                         zombies.add(componente);
                     else
                         defensas.add(componente);
