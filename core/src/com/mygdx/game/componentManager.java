@@ -50,6 +50,9 @@ public class componentManager extends EntitySerializer{
     }
 
     public ArrayList<ComponentePrototipo>[] getComponents(int nivel){
+        zombies.clear();
+        defensas.clear();
+        loadComponents();
         ArrayList<ComponentePrototipo>[] components = new ArrayList[2];
         components[0] = new ArrayList<ComponentePrototipo>();
         components[1] = new ArrayList<ComponentePrototipo>();

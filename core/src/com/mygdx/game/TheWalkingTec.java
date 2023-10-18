@@ -57,7 +57,7 @@ public class TheWalkingTec extends ApplicationAdapter {
 		camera.update();	
 		// We initialize the grid
 		labelStage = new Stage(viewport, batch);
-		partida = new Partida(batch, grid, 1, componentes[0], defensas, zombies, labelStage);
+		partida = new Partida(batch, grid, 1, componentes[0], defensas, zombies, labelStage, manager, null);
 		grid = new GameGrid(batch, viewport, partida);
 		partida.setGrid(grid);
 		zombie = new EntidadMovible(new Texture("zombie.png"), 490, 600, batch, true, partida, new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1, 1));
@@ -85,6 +85,7 @@ public class TheWalkingTec extends ApplicationAdapter {
 		// partida.startGame();
 		menu = new MenuOpciones(grid.getStage(), batch, partida);
 		menu.create();
+		partida.setMenu(menu);
 		Array<String> defensas = new Array<String>();
 		defensas.add("Bloque");
 		defensas.add("Arma");
@@ -103,10 +104,14 @@ public class TheWalkingTec extends ApplicationAdapter {
 		// We draw the zombie
 		batch.begin();
 		zombie.draw(batch);
-		for (int i = 0; i < zombies.size(); i++)
-		zombies.get(i).draw(batch);
-		for (int i = 0; i < defensas.size(); i++)
-		defensas.get(i).draw(batch);
+		for (int i = 0; i < zombies.size(); i++){
+			zombies.get(i).draw(batch);
+			zombies.get(i).getEntidad().setCantidadGolpes(100);
+		}
+		for (int i = 0; i < defensas.size(); i++){
+			// defensas.get(i).getEntidad().setCantidadGolpes(50);
+			defensas.get(i).draw(batch);
+		}
 		batch.end();
 		Actor[] actors = labelStage.getActors().items;
 		for (int i = 0; i < actors.length; i++) {
@@ -117,6 +122,8 @@ public class TheWalkingTec extends ApplicationAdapter {
 		}
 		labelStage.act(Gdx.graphics.getDeltaTime());
 		labelStage.draw();
+		if (partida.validarFin())
+			partida.siguienteNivel();
 	}
 	
 	@Override

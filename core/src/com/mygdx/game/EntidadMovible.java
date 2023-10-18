@@ -19,6 +19,7 @@ public class EntidadMovible extends Sprite{
     private Componente entidad;
     private Partida partida;
     private ArrayList<String> bitacora = new ArrayList<String>();
+    private EntidadMovibleThread thread;
 
     EntidadMovible(Texture texture, int x, int y, SpriteBatch batch, boolean movimientoDiagonal, Partida partida, Componente entidad){
         super(texture);
@@ -138,8 +139,12 @@ public class EntidadMovible extends Sprite{
     }
 
     public void startEntidad(){
-        EntidadMovibleThread thread = new EntidadMovibleThread(this, movimientoDiagonal, 5, partida);
+        thread = new EntidadMovibleThread(this, movimientoDiagonal, 5, partida);
         thread.start();
+    }
+
+    public void stopEntidad(){
+        thread.stopThread();
     }
 
 

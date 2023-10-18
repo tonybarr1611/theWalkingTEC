@@ -1,6 +1,8 @@
 package com.mygdx.game;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -61,7 +63,7 @@ public class MenuOpciones {
     // Espacios ejercito
     int espaciosEjercitoOcupados = 0;
     int espaciosEjercitoDisponibles = 20;
-    Label espaciosEjercito;
+    Label espaciosEjercito, nivel;
 
     dragabbleImage dragabbleImagee;
 
@@ -90,6 +92,7 @@ public class MenuOpciones {
         labels[1] = new Label("Guardar", skin);
         labels[2] = new Label("Cargar", skin);
         labels[3] = new Label("Salir", skin);
+        nivel = new Label("Nivel: ", skin);
 
         gridComponentes = partida.getGridComponentes();
         espaciosEjercito = new Label("Espacios ejercito: " + espaciosEjercitoOcupados + "/" + espaciosEjercitoDisponibles, skin);
@@ -129,6 +132,11 @@ public class MenuOpciones {
             labels[i].setX(10);
             labels[i].setY(75 + i * 100);
         }
+        stage.addActor(nivel);
+        nivel.setX(620);
+        nivel.setY(750);
+        nivel.setWidth(150);
+        nivel.setHeight(50);
 
         botonIniciar.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
             @Override
@@ -164,7 +172,7 @@ public class MenuOpciones {
         botonSalir.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                System.out.println("Salir");
+                Gdx.app.exit();
             }
         }
         );
@@ -212,15 +220,38 @@ public class MenuOpciones {
         dragAndDrop.addSource(dragabbleImagee);
     }
 
+    public ArrayList<ComponentePrototipo> aumentarNivel(ArrayList<ComponentePrototipo> prototipos){
+        Random RandomGenerator = new Random();
+        for (ComponentePrototipo prototipo : prototipos) {
+            prototipo.setNivel(prototipo.getNivel() + 1);
+            prototipo.setVida(Math.round(prototipo.getVida() * ((RandomGenerator.nextInt(15)+105)/100)));
+            prototipo.setCantidadGolpes(Math.round(prototipo.getCantidadGolpes() * ((RandomGenerator.nextInt(15)+105)/100)));
+        }
+        return prototipos;
+    }
+
     public void setDefensasDisponibles(ArrayList<ComponentePrototipo> defensasDisponibles){
+        prototipos.clear();
         this.prototipos = defensasDisponibles;
+        defensas.clear();
         Array<String> defensas = new Array<String>();
         for (int i = 0; i < defensasDisponibles.size(); i++) {
             defensas.add(defensasDisponibles.get(i).getNombre());
         }
+        this.prototipos = aumentarNivel(this.prototipos);
+
+        if (defensas.size == 0)
+            return;
         this.defensasDisponibles.setItems(defensas);
         this.defensasDisponibles.setSelectedIndex(0);
         this.currentPrototipo = defensasDisponibles.get(0);
+
+        int _nivel = partida.getNivel();
+        nivel.setText("Nivel: " + _nivel);
+        espaciosEjercitoOcupados = 0;
+        espaciosEjercitoDisponibles = 20 + (_nivel - 1) * 5;
+        espaciosEjercito.setText("Espacios ejercito: " + espaciosEjercitoOcupados + "/" + espaciosEjercitoDisponibles);
+
     }
 
     public boolean verifyCampos(int campos){
@@ -230,5 +261,10 @@ public class MenuOpciones {
             return true;
         }
         return false;
+    }
+
+    public void turnOn(){
+        defensasDisponibles.setDisabled(false);
+        nombreUsuario.setDisabled(false);
     }
 }

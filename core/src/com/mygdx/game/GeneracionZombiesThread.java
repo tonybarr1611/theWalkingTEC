@@ -3,8 +3,13 @@ package com.mygdx.game;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
 import com.mycompany.gestorcomponentes.Componentes.Zombies.ZombieChoquePrototipo;
 import com.mycompany.gestorcomponentes.Componentes.Zombies.ZombieMedianoAlcancePrototipo;
@@ -16,6 +21,8 @@ public class GeneracionZombiesThread extends Thread{
     ArrayList<ComponentePrototipo> prototipos;
     SpriteBatch batch;
     Texture[] sprites;
+    private Skin skin;
+    private boolean flag = true;
     
     GeneracionZombiesThread(Partida partida, SpriteBatch batch, int zombiesRestantes, ArrayList<ComponentePrototipo> prototipos, Texture[] sprites){
         this.partida = partida;
@@ -23,6 +30,7 @@ public class GeneracionZombiesThread extends Thread{
         this.zombiesRestantes = zombiesRestantes;
         this.prototipos = prototipos;
         this.sprites = sprites;
+        this.skin = null;
     }
 
     private Class<? extends Componente> getZombie(String clase){
@@ -31,6 +39,10 @@ public class GeneracionZombiesThread extends Thread{
                 return zombie.getZombie();
         }
         return null;
+    }
+
+    public void setSkin(Skin skin){
+        this.skin = skin;
     }
 
     private void generador(){
@@ -45,6 +57,22 @@ public class GeneracionZombiesThread extends Thread{
             x = x * 30 + 100;
             y = y * 30;
             System.out.println(x + " " + y);
+            if (prototipos.size() == 0){
+                Dialog dialog = new Dialog("No hay mas zombies", skin) {
+                    public void result(Object obj) {
+                        System.out.println("result "+obj);
+                    }
+                    };
+                    dialog.text("No hay mas zombies");
+                    dialog.button("OK", true); //sends "true" as the result
+                    dialog.show(partida.getStage());
+                    try {
+                        Gdx.app.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return;
+            }
             int index = rand.nextInt(prototipos.size());
             String clase = prototipos.get(index).getClass().toString();
             while (clase.contains("."))
@@ -86,12 +114,19 @@ public class GeneracionZombiesThread extends Thread{
     }
 
     public void run(){
-        boolean flag = true;
         while (flag){
             generador();
             if (zombiesRestantes <= 0)
                 flag = false;
         }
+    }
+
+    public void stopThread(){
+        flag = false;
+    }
+
+    public int getzombiesRestantes(){
+        return zombiesRestantes;
     }
 }
 

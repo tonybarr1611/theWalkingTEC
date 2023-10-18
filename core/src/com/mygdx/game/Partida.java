@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -7,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,13 +18,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Json.Serializable;
+import com.badlogic.gdx.utils.JsonValue;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
 import com.mygdx.game.Componentes.Defensa.DefensaAerea;
 import com.mygdx.game.Componentes.Defensa.DefensaBloque;
 import com.mygdx.game.Componentes.Zombies.*;
 
 
-public class Partida {
+public class Partida implements Serializable{
     private GameGrid grid;
     private Componente[][] gridComponentes = new Componente[25][25];
     private ArrayList<Componente> zombies = new ArrayList<Componente>();
@@ -39,9 +44,13 @@ public class Partida {
     private Skin skin;
     private DefensaAerea reliquia;
     private EntidadMovible reliquiaMovible;
+    private GeneracionZombiesThread generacionZombies;
+    private componentManager manager;
+    private MenuOpciones menu;
+    ArrayList<String> sprites;
 
     
-    public Partida(SpriteBatch batch, GameGrid grid, int nivel, ArrayList<ComponentePrototipo> prototipos, ArrayList<EntidadMovible> defensasMovibles, ArrayList<EntidadMovible> zombiesMovibles, Stage labelStage){
+    public Partida(SpriteBatch batch, GameGrid grid, int nivel, ArrayList<ComponentePrototipo> prototipos, ArrayList<EntidadMovible> defensasMovibles, ArrayList<EntidadMovible> zombiesMovibles, Stage labelStage, componentManager manager, MenuOpciones menu){
         this.batch = batch;
         this.grid = grid;
         this.nivel = nivel;
@@ -51,8 +60,10 @@ public class Partida {
         this.defensasMovibles = defensasMovibles;
         this.zombiesMovibles = zombiesMovibles;
         this.labelStage = labelStage;
+        this.manager = manager;
+        this.menu = menu;
         this.skin = new Skin(Gdx.files.internal("theWalkingTEC\\core\\src\\com\\mygdx\\game\\Skins\\Glassy\\glassy-ui.json"));
-        ArrayList<String> sprites = new ArrayList<String>();
+        sprites = new ArrayList<String>();
         sprites.add("reliquia.png");
         this.reliquia = new DefensaAerea("Reliquia", "PNG", sprites, 300, 0, 1, 1, 1, 0);
         this.reliquiaMovible = new EntidadMovible(new Texture(Gdx.files.internal(sprites.get(0))), 12 * 30 + 100, 12 * 30, this.batch, false, this, this.reliquia);
@@ -134,6 +145,14 @@ public class Partida {
         this.nivel = nivel;
     }
 
+    public int getNivel(){
+        return nivel;
+    }
+    
+    public Stage getStage(){
+        return grid.getStage();
+    }
+
     public Componente[][] getGridComponentes(){
         return gridComponentes;
     }
@@ -153,7 +172,8 @@ public class Partida {
         Texture[] sprites = new Texture[prototipos.size()];
         for (int i = 0; i < prototipos.size(); i++)
             sprites[i] = new Texture(prototipos.get(i).getSprites().get(0));
-        Thread generacionZombies = new GeneracionZombiesThread(this, batch, zombiesRestantes, prototipos, sprites);
+        generacionZombies = new GeneracionZombiesThread(this, batch, zombiesRestantes, prototipos, sprites);
+        generacionZombies.setSkin(skin);
         generacionZombies.start();
     }
     
@@ -188,6 +208,10 @@ public class Partida {
         this.grid = grid;
     }
 
+    public void setMenu(MenuOpciones menu){
+        this.menu = menu;
+    }
+
     public void verInformacionCasilla(int x, int y){
         x = Math.round((x - 100) / 30);
         y = Math.round(y / 30);
@@ -215,6 +239,124 @@ public class Partida {
             Gdx.input.setInputProcessor(labelStage);
             dialog.toFront();
         }
+    }
+
+    public boolean validarFin(){
+        try{
+            zombiesRestantes = generacionZombies.getzombiesRestantes();
+        }catch(Exception NullPointerException){
+            return false;
+        }
+        if (reliquia.getVida() <= 0){
+            return true;
+        }
+        if (zombies.size() == 0 && zombiesRestantes == 0){
+            return true;
+        }
+        return false;
+    }
+
+    public void wipeEntities(){
+        for (EntidadMovible entidad : zombiesMovibles){
+            entidad.stopEntidad();
+        }
+        for (EntidadMovible entidad : defensasMovibles){
+            entidad.stopEntidad();
+        }
+        for (EntidadMovible entidad : muertos){
+            entidad.stopEntidad();
+        }
+        zombiesMovibles.clear();
+        defensasMovibles.clear();
+        muertos.clear();
+        for (int i = 0; i < 25; i++){
+            for (int j = 0; j < 25; j++){
+                gridComponentes[i][j] = null;
+            }
+        }
+    }
+
+    public void updatePrototipos(){
+        nivel++;
+        espaciosEjercitos = 20 + (nivel - 1) * 5;
+        zombiesRestantes = espaciosEjercitos;
+        ArrayList<ComponentePrototipo>[] componentes = manager.getComponents(nivel);
+        prototipos = componentes[0];
+        Random RandomGenerator = new Random();
+        for (ComponentePrototipo prototipo : prototipos){
+            prototipo.setNivel(prototipo.getNivel() + 1);
+            prototipo.setVida(Math.round(prototipo.getVida() * ((RandomGenerator.nextInt(15)+105)/100)));
+            prototipo.setCantidadGolpes(Math.round(prototipo.getCantidadGolpes() * ((RandomGenerator.nextInt(15)+105)/100)));
+        }
+        menu.setDefensasDisponibles(componentes[1]);
+        menu.turnOn();
+    }
+
+    public void siguienteNivel(){
+        if (reliquia.getVida() <= 0){
+            Dialog dialog = new Dialog("DERROTA", skin);
+            dialog.setColor(Color.BLACK);
+            dialog.text("Has perdido la partida. ");
+            dialog.text("Desea saltarse el nivel?");
+            TextButton button = new TextButton("OK", skin);
+            button.addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Gdx.input.setInputProcessor(grid.getStage());
+                }
+            });
+            dialog.button(button);
+            dialog.show(labelStage);
+            Gdx.input.setInputProcessor(labelStage);
+            dialog.toFront();
+            reliquia.setVida(100);
+            for (Componente componente : zombies){
+                componente.getEntidad().stopEntidad();
+            }
+            generacionZombies.stopThread();
+        }
+        else{
+            Dialog dialog = new Dialog("VICTORIA", skin);
+            dialog.setColor(Color.BLACK);
+            dialog.text("Has ganado la partida. ");
+            TextButton button = new TextButton("OK", skin);
+            button.addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Gdx.input.setInputProcessor(grid.getStage());
+                }
+            });
+            dialog.button(button);
+            dialog.show(labelStage);
+            Gdx.input.setInputProcessor(labelStage);
+            dialog.toFront();
+            reliquia.setVida(100);
+            for (Componente componente : zombies){
+                componente.getEntidad().stopEntidad();
+            }
+            generacionZombies.stopThread();
+            generacionZombies = null;
+        }
+        wipeEntities();
+        updatePrototipos();
+        this.reliquia = new DefensaAerea("Reliquia", "PNG", sprites, 300 + (nivel - 1) * 100, 0, 1, 1, 1, 0);
+        this.reliquiaMovible = new EntidadMovible(new Texture(Gdx.files.internal(sprites.get(0))), 12 * 30 + 100, 12 * 30, this.batch, false, this, this.reliquia);
+        reliquia.setEntidad(reliquiaMovible);
+        reliquia.setPartida(this);
+        this.addDefensa(reliquiaMovible);
+        reliquiaMovible.setDestino(12 * 30 + 100, 12 * 30);
+    }
+
+    @Override
+    public void write(Json json) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'write'");
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'read'");
     }
 }
 
