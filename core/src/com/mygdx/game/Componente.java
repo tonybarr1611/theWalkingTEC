@@ -89,12 +89,9 @@ public abstract class Componente implements Serializable{
     public void morir(){
         // entidad.setTexture(new Texture(Gdx.files.internal("tumba.png")));
         entidad.setDestino((int)entidad.getX(), (int)entidad.getY());
-        partida.removeEntidad(entidad);
         entidad.agregarBitacora(nombre + " ha muerto en la posición x: " + Math.round((entidad.getX()+100)/30) + " y: " + Math.round(entidad.getY()/30) + "\n");
-    }
-
-    public String toString(){
-        return nombre + " " + tipoApariencia + " " + vida + " " + cantidadGolpes + " " + nivel + " " + campos + " " + nivelAparicion + " " + rango;
+        entidad.getEntidad().setNombre(nombre + "_" + Math.round((entidad.getX()+100)/30) + "_" + Math.round(entidad.getY()/30));
+        partida.removeEntidad(entidad);
     }
 
     public String getBitacora(){
@@ -104,6 +101,10 @@ public abstract class Componente implements Serializable{
             bitacoraString += string;
         }
         return bitacoraString;
+    }
+
+    public String toString(){
+        return nombre;
     }
 
 

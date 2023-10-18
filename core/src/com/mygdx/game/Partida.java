@@ -3,7 +3,10 @@ package com.mygdx.game;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -45,12 +48,13 @@ public class Partida{
     private SpriteBatch batch;
     private Stage labelStage;
     private Skin skin;
-    private DefensaAerea reliquia;
+    private DefensaBloque reliquia;
     private EntidadMovible reliquiaMovible;
     private GeneracionZombiesThread generacionZombies;
     private componentManager manager;
     private MenuOpciones menu;
-    ArrayList<String> sprites;
+    private ArrayList<String> sprites;
+
 
     
     public Partida(SpriteBatch batch, GameGrid grid, int nivel, ArrayList<ComponentePrototipo> prototipos, ArrayList<EntidadMovible> defensasMovibles, ArrayList<EntidadMovible> zombiesMovibles, Stage labelStage, componentManager manager, MenuOpciones menu){
@@ -68,7 +72,7 @@ public class Partida{
         this.skin = new Skin(Gdx.files.internal("theWalkingTEC\\core\\src\\com\\mygdx\\game\\Skins\\Glassy\\glassy-ui.json"));
         sprites = new ArrayList<String>();
         sprites.add("reliquia.png");
-        this.reliquia = new DefensaAerea("Reliquia", "PNG", sprites, 300, 0, 1, 1, 1, 0);
+        this.reliquia = new DefensaBloque("Reliquia", "PNG", sprites, 300, 0, 1, 1, 1, 0);
         this.reliquiaMovible = new EntidadMovible(new Texture(Gdx.files.internal(sprites.get(0))), 12 * 30 + 100, 12 * 30, this.batch, false, this, this.reliquia);
         reliquia.setEntidad(reliquiaMovible);
         reliquia.setPartida(this);
@@ -168,6 +172,7 @@ public class Partida{
         for (int i = 0; i < 25; i++){
             for (int j = 0; j < 25; j++){
                 if (gridComponentes[i][j] != null){
+                    gridComponentes[i][j].getEntidad().agregarBitacora(gridComponentes[i][j].getVida() + "HP.\n");
                     gridComponentes[i][j].getEntidad().startEntidad();
                 }
             }
@@ -250,8 +255,8 @@ public class Partida{
         }catch(Exception NullPointerException){
             return false;
         }
-        if (reliquia.getVida() <= 0){
-            return true;
+        if (reliquia.getVida() <= 0 && muertos.contains(reliquia.getEntidad())){
+           return true;
         }
         if (zombies.size() == 0 && zombiesRestantes == 0){
             return true;
@@ -280,23 +285,22 @@ public class Partida{
     }
 
     public void updatePrototipos(){
+        if (nivel == 1)
+            reliquia.setVida(300);
         nivel++;
+        reliquia.setVida(reliquia.getVida() + 100);
         espaciosEjercitos = 20 + (nivel - 1) * 5;
         zombiesRestantes = espaciosEjercitos;
         ArrayList<ComponentePrototipo>[] componentes = manager.getComponents(nivel);
         prototipos = componentes[0];
         Random RandomGenerator = new Random();
-        for (ComponentePrototipo prototipo : prototipos){
-            prototipo.setNivel(prototipo.getNivel() + 1);
-            prototipo.setVida(Math.round(prototipo.getVida() * ((RandomGenerator.nextInt(15)+105)/100)));
-            prototipo.setCantidadGolpes(Math.round(prototipo.getCantidadGolpes() * ((RandomGenerator.nextInt(15)+105)/100)));
-        }
         menu.setDefensasDisponibles(componentes[1]);
         menu.turnOn();
     }
 
     public void siguienteNivel(){
         if (reliquia.getVida() <= 0){
+            reliquia.setVida(100);
             Dialog dialog = new Dialog("DERROTA", skin);
             dialog.setColor(Color.BLACK);
             dialog.text("Has perdido la partida. ");
@@ -312,7 +316,6 @@ public class Partida{
             dialog.show(labelStage);
             Gdx.input.setInputProcessor(labelStage);
             dialog.toFront();
-            reliquia.setVida(100);
             for (Componente componente : zombies){
                 componente.getEntidad().stopEntidad();
             }
@@ -340,9 +343,47 @@ public class Partida{
             generacionZombies.stopThread();
             generacionZombies = null;
         }
+        ArrayList<Componente> componentesUsados = new ArrayList<Componente>();
+        muertos.remove(reliquia.getEntidad());
+        reliquia.setVida(0);
+        componentesUsados.add(reliquia);
+        
+
+        for (Componente comp : zombies){
+            comp.setNombre(comp.getNombre() + "_" + (comp.getEntidad().getPosicionX() + 100 ) / 30 + "_" + comp.getEntidad().getPosicionY() / 30);
+            componentesUsados.add(comp);
+        }
+        for (Componente comp : defensas){
+            comp.setNombre(comp.getNombre() + "_" + (comp.getEntidad().getPosicionX() + 100 ) / 30 + "_" + comp.getEntidad().getPosicionY() / 30);
+            componentesUsados.add(comp);
+        }
+        for (EntidadMovible ent : muertos){
+            if (ent.getEntidad().getNombre() == "Reliquia")
+                continue;
+            if (ent.getPosicionX() == 99999){
+                int i = 0;
+                String nombre = ent.getEntidad().getNombre() + "_" + Integer.toString(i);
+                while(true){
+                    for (Componente agregado : componentesUsados){
+                        if (agregado.getNombre() == nombre){
+                            i++;
+                            nombre = ent.getEntidad().getNombre() + "_" + Integer.toString(i);
+                            continue;
+                        }
+                    }
+                    break;
+                }
+            }
+            componentesUsados.add(ent.getEntidad());
+        }
+        for (Componente comp : componentesUsados){
+            System.out.println(comp.getNombre());
+        }
+        ventanaBitacora bitacorasVentana = new ventanaBitacora(componentesUsados);
+        bitacorasVentana.setVisible(true);
         wipeEntities();
         updatePrototipos();
-        this.reliquia = new DefensaAerea("Reliquia", "PNG", sprites, 300 + (nivel - 1) * 100, 0, 1, 1, 1, 0);
+        this.reliquia = new DefensaBloque("Reliquia", "PNG", sprites, 300 + (nivel - 1) * 100, 0, 1, 1, 1, 0);
         this.reliquiaMovible = new EntidadMovible(new Texture(Gdx.files.internal(sprites.get(0))), 12 * 30 + 100, 12 * 30, this.batch, false, this, this.reliquia);
         reliquia.setEntidad(reliquiaMovible);
         reliquia.setPartida(this);
@@ -385,6 +426,73 @@ public class Partida{
             }catch(IOException e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void loadGame(){
+        String nombreUsuario = menu.getNombreUsuario();
+        if (nombreUsuario == null){
+            Dialog dialog = new Dialog("ERROR", skin);
+            dialog.setColor(Color.BLACK);
+            dialog.text("No se ha ingresado un nombre de usuario.");
+            TextButton button = new TextButton("OK", skin);
+            button.addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Gdx.input.setInputProcessor(grid.getStage());
+                }
+            });
+            dialog.button(button);
+            dialog.show(labelStage);
+            Gdx.input.setInputProcessor(labelStage);
+            dialog.toFront();
+            return;
+        }
+        String currentDir = System.getProperty("user.dir");
+        File filename = new File(currentDir + "/Saves/" + nombreUsuario + ".txt");
+        if (filename.exists()){
+            Scanner fileReader;
+            int nivelGuardadoInt;
+            try {
+                fileReader = new Scanner(filename);
+                String nivelGuardado = "";
+                while (fileReader.hasNextLine()){
+                   nivelGuardado = fileReader.nextLine().trim();
+                   break;
+                }
+                nivelGuardadoInt = Integer.parseInt(nivelGuardado);
+                System.out.println(nivelGuardadoInt);  
+                if (nivelGuardadoInt > nivel){
+                    while (nivelGuardadoInt > nivel){
+                        updatePrototipos();
+                    }
+                }else if (nivelGuardadoInt < nivel){
+                    nivel = 1;
+                    updatePrototipos();
+                }
+                Random RandomGenerator = new Random();
+                for (ComponentePrototipo prototipo : prototipos){
+                    for(int i = 0; i < nivel; i++){
+                        prototipo.setNivel(prototipo.getNivel() + 1);
+                        System.out.println(prototipo.getVida());
+                        float factor = (float)(((float)RandomGenerator.nextInt(15)+105)/100);
+                        prototipo.setVida(Math.round(prototipo.getVida() * factor));
+                        prototipo.setCantidadGolpes(Math.round(prototipo.getCantidadGolpes() * factor));
+                    }
+                }
+                reliquia.setVida(300 + (nivel - 1) * 100);
+                try{
+                    wipeEntities();
+                }catch (NullPointerException e){
+                    System.out.println("No hay entidades que borrar");
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }

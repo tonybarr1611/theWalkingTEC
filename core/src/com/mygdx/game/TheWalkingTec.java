@@ -60,28 +60,7 @@ public class TheWalkingTec extends ApplicationAdapter {
 		partida = new Partida(batch, grid, 1, componentes[0], defensas, zombies, labelStage, manager, null);
 		grid = new GameGrid(batch, viewport, partida);
 		partida.setGrid(grid);
-		zombie = new EntidadMovible(new Texture("zombie.png"), 490, 600, batch, true, partida, new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), 100, 1, 1, 1, 1, 1));
-		// animation = GifDecoder.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal("zombie.gif").read());
 		// We initialize the zombie
-		for (int i = 0; i < 10; i++) {
-			DefensaBloque defensa = new DefensaBloque("Bloque", "Bloque", new ArrayList<String>(), i, 1, 1, 1, 1, 1);
-			EntidadMovible entidad = new EntidadMovible(new Texture("zombie.png"), x, y, batch, i % 2 == 0, partida, defensa);
-			defensa.setEntidad(entidad);
-			defensa.setPartida(partida);
-			if (partida.addDefensa(entidad)){
-				zombies.add(entidad);
-				if (zombies.size() == 1)
-					entidad.setDestino(829, 450);
-				else 
-					entidad.setDestino(830, 600);
-				System.out.println("Se agrego el zombie" + i);
-			}
-			if (i % 2 == 0){
-				x += 50;
-				y += 50;
-			}
-			// zombies.get(i).startEntidad();
-		}
 		// partida.startGame();
 		menu = new MenuOpciones(grid.getStage(), batch, partida);
 		menu.create();
@@ -103,7 +82,6 @@ public class TheWalkingTec extends ApplicationAdapter {
 		grid.render();
 		// We draw the zombie
 		batch.begin();
-		zombie.draw(batch);
 		for (int i = 0; i < zombies.size(); i++){
 			zombies.get(i).draw(batch);
 			zombies.get(i).getEntidad().setCantidadGolpes(100);

@@ -33,7 +33,7 @@ public class EntidadMovible extends Sprite{
         this.movimientoDiagonal = movimientoDiagonal;
         this.partida = partida;
         this.entidad = entidad;
-        bitacora.add("Se ha creado la entidad " + entidad.getNombre() + " en la posicion (" + x + ", " + y + ") con " + entidad.getVida() + " HP.");
+        bitacora.add("Se ha creado la entidad " + entidad.getNombre() + " en la posicion (" + x + ", " + y + ") con " );
     }
 
     public void setPosicion(int x, int y){

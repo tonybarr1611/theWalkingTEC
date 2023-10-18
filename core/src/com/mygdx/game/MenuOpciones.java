@@ -146,6 +146,9 @@ public class MenuOpciones {
                 nombreUsuario.setDisabled(true);
                 dragAndDrop.clear();
                 defensasDisponibles.setDisabled(true);
+                botonIniciar.setDisabled(true);
+                botonGuardar.setDisabled(true);
+                botonCargar.setDisabled(true);
                 partida.startGame();
             }
         }
@@ -163,7 +166,7 @@ public class MenuOpciones {
         botonCargar.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                System.out.println("Cargar");
+                partida.loadGame();
             }
         }
         );
@@ -198,6 +201,9 @@ public class MenuOpciones {
     }
 
     public void renderMenu(){
+        if (!(nivel.getText().toString().contentEquals("Nivel: " + partida.getNivel()))){
+            nivel.setText("Nivel: " + partida.getNivel());
+        }
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         batch.begin();
@@ -269,5 +275,8 @@ public class MenuOpciones {
     public void turnOn(){
         defensasDisponibles.setDisabled(false);
         nombreUsuario.setDisabled(false);
+        botonIniciar.setDisabled(false);
+        botonGuardar.setDisabled(false);
+        botonCargar.setDisabled(false);
     }
 }
