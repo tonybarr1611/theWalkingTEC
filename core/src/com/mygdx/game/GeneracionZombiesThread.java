@@ -8,19 +8,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
 import com.mycompany.gestorcomponentes.Componentes.Zombies.ZombieChoquePrototipo;
 import com.mycompany.gestorcomponentes.Componentes.Zombies.ZombieMedianoAlcancePrototipo;
 import com.mygdx.game.Componentes.Zombies.*;
 
 public class GeneracionZombiesThread extends Thread{
-    Partida partida;
-    int zombiesRestantes;
-    ArrayList<ComponentePrototipo> prototipos;
-    SpriteBatch batch;
-    Texture[] sprites;
+    private Partida partida;
+    private int zombiesRestantes;
+    private ArrayList<ComponentePrototipo> prototipos;
+    private SpriteBatch batch;
+    private Texture[] sprites;
     private Skin skin;
     private boolean flag = true;
     
@@ -94,6 +92,7 @@ public class GeneracionZombiesThread extends Thread{
                 EntidadMovible entidad = new EntidadMovible(tex, x, y, batch, false, partida, zombie);
                 zombie.setEntidad(entidad);
                 zombie.setPartida(partida);
+                entidad.agregarBitacora(zombie.getVida() + "HP\n");
                 if (partida.addZombie(entidad)){
                     // entidad.setDestino(400, 450);
                     entidad.startEntidad();

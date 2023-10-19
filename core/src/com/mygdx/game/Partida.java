@@ -1,12 +1,10 @@
 package com.mygdx.game;
 
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -14,23 +12,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.RandomXS128;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.Json.Serializable;
-import com.badlogic.gdx.utils.JsonValue;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
-import com.mygdx.game.Componentes.Defensa.DefensaAerea;
+import com.mycompany.gestorcomponentes.Componentes.MedianoAlcancePrototipo;
+import com.mygdx.game.Componentes.MedianoAlcance;
 import com.mygdx.game.Componentes.Defensa.DefensaBloque;
-import com.mygdx.game.Componentes.Zombies.*;
 
 
 public class Partida{
@@ -178,15 +169,22 @@ public class Partida{
             }
         }
         Texture[] sprites = new Texture[prototipos.size()];
-        for (int i = 0; i < prototipos.size(); i++)
-            sprites[i] = new Texture(prototipos.get(i).getSprites().get(0));
+        String currentDir = System.getProperty("user.dir");
+        for (int i = 0; i < prototipos.size(); i++){
+            sprites[i] = new Texture(currentDir + "/Componentes/Assets/" + prototipos.get(i).getNombre() + ".png");
+            System.out.println(prototipos.get(i).getSprites().get(0));
+        }
         generacionZombies = new GeneracionZombiesThread(this, batch, zombiesRestantes, prototipos, sprites);
         generacionZombies.setSkin(skin);
         generacionZombies.start();
     }
     
     public void addDamageLabel(int x, int y, int damage){
-        damageLabel label = new damageLabel(Integer.toString(damage), skin, x, y);
+        addDamageLabel(x, y, Integer.toString(damage));
+    }
+
+    public void addDamageLabel(int x, int y, String damage){
+        damageLabel label = new damageLabel(damage, skin, x, y);
         labelStage.addActor(label);
     }
 
@@ -478,6 +476,8 @@ public class Partida{
                         float factor = (float)(((float)RandomGenerator.nextInt(15)+105)/100);
                         prototipo.setVida(Math.round(prototipo.getVida() * factor));
                         prototipo.setCantidadGolpes(Math.round(prototipo.getCantidadGolpes() * factor));
+                        if (prototipo instanceof MedianoAlcancePrototipo)
+                            ((MedianoAlcancePrototipo)prototipo).setAlcance(Math.round(((MedianoAlcancePrototipo)prototipo).getAlcance() * factor));
                     }
                 }
                 reliquia.setVida(300 + (nivel - 1) * 100);

@@ -17,4 +17,13 @@ public class AtaqueMultiple extends Componente{
     public AtaqueMultiple(String nombre, String tipoApariencia, ArrayList<String> sprites, int vida, int cantidadGolpes, int nivel, int campos, int nivelAparicion, int rango){
         super(nombre, tipoApariencia, sprites, vida, cantidadGolpes, nivel, campos, nivelAparicion, rango);
     }
+
+    public void atacar(Componente objetivo){
+        for (int i = 0; i < super.getCantidadGolpes(); i++){
+            objetivo.recibirDano(super.getCantidadGolpes(), this);
+            super.atacar(objetivo);
+        }
+        super.getEntidad().agregarBitacora(super.getNombre() + " ha acribillado a " + objetivo.getNombre() + " por " + super.getCantidadGolpes() + " de daño\n");
+        super.getPartida().addDamageLabel((int)objetivo.getEntidad().getX() + 20, (int)objetivo.getEntidad().getY() + 20, "¡PUM PUM! x " + super.getCantidadGolpes() + "\n");
+    }
 }

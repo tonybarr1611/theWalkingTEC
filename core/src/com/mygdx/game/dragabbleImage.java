@@ -6,26 +6,25 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
-import com.mycompany.gestorcomponentes.Componentes.*;
 import com.mycompany.gestorcomponentes.Componentes.Defensa.DefensaImpactoPrototipo;
 import com.mycompany.gestorcomponentes.Componentes.Defensa.DefensaMedianoAlcancePrototipo;
+import com.mycompany.gestorcomponentes.Componentes.Defensa.DefensaAtaqueMultiplePrototipo;
 import com.mygdx.game.Componentes.Defensa.*;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
 
 
 public class dragabbleImage extends DragAndDrop.Source{
-    MenuOpciones menu;
-    Image image;
-    DragAndDrop dragAndDrop;
-    SpriteBatch batch;
-    Partida partida;
-    ArrayList<EntidadMovible> defensas;
-    Texture tex;
-    ComponentePrototipo prototipo;
+    private MenuOpciones menu;
+    private Image image;
+    private DragAndDrop dragAndDrop;
+    private SpriteBatch batch;
+    private Partida partida;
+    private ArrayList<EntidadMovible> defensas;
+    private Texture tex;
+    private ComponentePrototipo prototipo;
 
     public dragabbleImage(MenuOpciones menu, Image image, DragAndDrop dragAndDrop, Partida partida, ArrayList<EntidadMovible> defensas, SpriteBatch batch, Texture tex, ComponentePrototipo prototipo) {
         super(image);
@@ -43,8 +42,8 @@ public class dragabbleImage extends DragAndDrop.Source{
         switch (clase) {
             case "DEFENSAAEREAPROTOTIPO":
                 return defensasEnum.DEFENSAAEREAPROTOTIPO.getDefensa();
-            case "DEFENSAATAQUEMULTIPLE":
-                return defensasEnum.DEFENSAATAQUEMULTIPLE.getDefensa();
+            case "DEFENSAATAQUEMULTIPLEPROTOTIPO":
+                return defensasEnum.DEFENSAATAQUEMULTIPLEPROTOTIPO.getDefensa();
             case "DEFENSABLOQUEPROTOTIPO":
                 return defensasEnum.DEFENSABLOQUEPROTOTIPO.getDefensa();
             case "DEFENSADECONTACTOPROTOTIPO":
@@ -80,9 +79,7 @@ public class dragabbleImage extends DragAndDrop.Source{
             // Espacio reservado para zombies
             if (!(casilla_x < 3 || casilla_x > 21 || casilla_y < 3 || casilla_y > 21)){
                 // System.out.println(prototipo.getClass());
-                String clase = prototipo.getClass().toString();
-                while (clase.contains("."))
-                    clase = clase.substring(clase.indexOf(".")+1);
+                String clase = prototipo.getClass().getSimpleName().toString();
                 clase = clase.toUpperCase();
                 System.out.println(clase);
                 Class<? extends Componente> claseDefensa = getDefensa(clase);
@@ -119,7 +116,7 @@ public class dragabbleImage extends DragAndDrop.Source{
 
 enum defensasEnum{
     DEFENSAAEREAPROTOTIPO (DefensaAerea.class),
-    DEFENSAATAQUEMULTIPLE (DefensaAtaqueMultiple.class),
+    DEFENSAATAQUEMULTIPLEPROTOTIPO (DefensaAtaqueMultiple.class),
     DEFENSABLOQUEPROTOTIPO (DefensaBloque.class),
     DEFENSADECONTACTOPROTOTIPO (DefensaDeContacto.class),
     DEFENSAIMPACTOPROTOTIPO (DefensaImpacto.class),

@@ -5,47 +5,32 @@ import java.util.ArrayList;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
-import com.mygdx.game.Componentes.Defensa.DefensaBloque;
 
 public class TheWalkingTec extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private FitViewport viewport;	
-	Animation<TextureRegion> animation;
 	private GameGrid grid;
-	EntidadMovible zombie;
-	int x = 100;
-	int y = 0;
-	ArrayList<EntidadMovible> zombies = new ArrayList<EntidadMovible>();
-	ArrayList<EntidadMovible> defensas = new ArrayList<EntidadMovible>();
-	ArrayList<damageLabel> labels = new ArrayList<damageLabel>();
-	Partida partida;
-	MenuOpciones menu;
-	Stage labelStage;
+	private ArrayList<EntidadMovible> zombies = new ArrayList<EntidadMovible>();
+	private ArrayList<EntidadMovible> defensas = new ArrayList<EntidadMovible>();
+	private Partida partida;
+	private MenuOpciones menu;
+	private Stage labelStage;
 
 	
 	@Override
 	public void create () {
 		componentManager manager = new componentManager();
-		ArrayList<ComponentePrototipo>[] componentes = manager.getComponents(15);
-		System.out.println("hereher");
-		System.out.println(componentes[0].size());
-		System.out.println(componentes[1].size());
+		ArrayList<ComponentePrototipo>[] componentes = manager.getComponents(1);
 		// SpriteBatch is used to draw 2D images
 		batch = new SpriteBatch();
 		// We initialize the camera
@@ -84,10 +69,8 @@ public class TheWalkingTec extends ApplicationAdapter {
 		batch.begin();
 		for (int i = 0; i < zombies.size(); i++){
 			zombies.get(i).draw(batch);
-			zombies.get(i).getEntidad().setCantidadGolpes(100);
 		}
 		for (int i = 0; i < defensas.size(); i++){
-			// defensas.get(i).getEntidad().setCantidadGolpes(50);
 			defensas.get(i).draw(batch);
 		}
 		batch.end();

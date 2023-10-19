@@ -7,10 +7,6 @@ package com.mygdx.game;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.print.attribute.standard.Media;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
 import com.mycompany.gestorcomponentes.Componentes.ChoqueImpactoPrototipo;
 import com.mycompany.gestorcomponentes.Componentes.MedianoAlcancePrototipo;
@@ -72,6 +68,9 @@ public abstract class Componente implements Serializable{
     }
 
     public void atacar(Componente objetivo){
+        if (cantidadGolpes == 0){
+            return;
+        }
         objetivo.recibirDano(cantidadGolpes, this);
         entidad.agregarBitacora(nombre + " ha atacado a " + objetivo.getNombre() + " por " + cantidadGolpes + " de daño\n");
         partida.addDamageLabel((int)objetivo.getEntidad().getX() + 20, (int)objetivo.getEntidad().getY() + 20, cantidadGolpes);
@@ -87,7 +86,6 @@ public abstract class Componente implements Serializable{
     }
 
     public void morir(){
-        // entidad.setTexture(new Texture(Gdx.files.internal("tumba.png")));
         entidad.setDestino((int)entidad.getX(), (int)entidad.getY());
         entidad.agregarBitacora(nombre + " ha muerto en la posición x: " + Math.round((entidad.getX()+100)/30) + " y: " + Math.round(entidad.getY()/30) + "\n");
         entidad.getEntidad().setNombre(nombre + "_" + Math.round((entidad.getX()+100)/30) + "_" + Math.round(entidad.getY()/30));
@@ -123,6 +121,10 @@ public abstract class Componente implements Serializable{
 
     public String getNombre() {
         return nombre;
+    }
+
+    public Partida getPartida(){
+        return partida;
     }
 
     public void setNombre(String nombre) {

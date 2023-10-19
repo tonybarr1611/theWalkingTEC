@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mycompany.gestorcomponentes.ComponentePrototipo;
-import com.mycompany.gestorcomponentes.Componentes.*;
 
 
 public class EntidadMovible extends Sprite{

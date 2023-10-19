@@ -4,8 +4,6 @@
  */
 package com.mygdx.game;
 
-import com.mygdx.game.Componente.*;
-import com.mygdx.game.Componentes.*;
 import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;

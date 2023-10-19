@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Componentes.Defensa.DefensaAerea;
 import com.mygdx.game.Componentes.Zombies.ZombieAereo;
 

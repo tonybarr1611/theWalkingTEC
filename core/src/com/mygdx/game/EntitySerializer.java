@@ -15,7 +15,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import com.mycompany.gestorcomponentes.Componentes.*;
 
 
 /**

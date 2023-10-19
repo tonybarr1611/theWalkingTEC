@@ -2,12 +2,9 @@ package com.mygdx.game;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.random.RandomGenerator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -17,53 +14,49 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
 import com.badlogic.gdx.utils.Array;
 import com.mycompany.gestorcomponentes.ComponentePrototipo;
-import com.mygdx.game.dragabbleImage;
 
 public class MenuOpciones {
     // Stage for the menu
-    Stage stage;
+    private Stage stage;
     // Dropdown menu
-    SelectBox<String> defensasDisponibles;
+    private SelectBox<String> defensasDisponibles;
     // Start game button
-    Button botonIniciar;
+    private Button botonIniciar;
     // Save game button
-    Button botonGuardar;
+    private Button botonGuardar;
     // Load game button
-    Button botonCargar;
+    private Button botonCargar;
     // Exit game button
-    Button botonSalir;
+    private Button botonSalir;
     // Buttons labels array
-    Label[] labels = new Label[4];
+    private Label[] labels = new Label[4];
     // Username text field
-    TextField nombreUsuario;
+    private TextField nombreUsuario;
     // Dragabble sprite
-    Image draggableImage;
+    private Image draggableImage;
     // Drag and drop object
-    DragAndDrop dragAndDrop;
+    private DragAndDrop dragAndDrop;
     // GameGrid object
     private Componente[][] gridComponentes;
     // Batch
-    SpriteBatch batch;
+    private SpriteBatch batch;
     // Partida object
-    Partida partida;
+    private Partida partida;
     // Texture for the draggable sprite
-    Texture tex;
+    private Texture tex;
     // Array of defensas
-    ArrayList<EntidadMovible> defensas = new ArrayList<EntidadMovible>();
+    private ArrayList<EntidadMovible> defensas = new ArrayList<EntidadMovible>();
     // Array prototipos
-    ArrayList<ComponentePrototipo> prototipos = new ArrayList<ComponentePrototipo>();
-    ComponentePrototipo currentPrototipo;
+    private ArrayList<ComponentePrototipo> prototipos = new ArrayList<ComponentePrototipo>();
+    private ComponentePrototipo currentPrototipo;
     // Espacios ejercito
-    int espaciosEjercitoOcupados = 0;
-    int espaciosEjercitoDisponibles = 20;
-    Label espaciosEjercito, nivel;
+    private int espaciosEjercitoOcupados = 0;
+    private int espaciosEjercitoDisponibles = 20;
+    private Label espaciosEjercito, nivel;
 
     dragabbleImage dragabbleImagee;
 
@@ -82,7 +75,7 @@ public class MenuOpciones {
         botonCargar = new Button(skinBotones);
         botonSalir = new Button(skinBotones);
         nombreUsuario = new TextField("", skin);
-        tex = new Texture("zombie.png");
+        tex = new Texture("caja.png");
         draggableImage = new Image(tex);
         draggableImage.setSize(30, 30);
         dragAndDrop = new DragAndDrop();
@@ -183,10 +176,11 @@ public class MenuOpciones {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 System.out.println(defensasDisponibles.getSelected());
+                String currentDir = System.getProperty("user.dir");
                 for (int i = 0; i < prototipos.size(); i++){
                     if (prototipos.get(i).getNombre().contentEquals(defensasDisponibles.getSelected())){
                         currentPrototipo = prototipos.get(i);
-                        updateDraggable(new Texture(currentPrototipo.getSprites().get(0)));
+                        updateDraggable(new Texture(currentDir + "/Componentes/Assets/" + currentPrototipo.getNombre() + ".png"));
                         break;
                     }
                 }

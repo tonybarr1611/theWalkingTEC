@@ -4,7 +4,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class damageLabel extends Label{
-
     private int x;
     private int y;
     private float time = 60;
@@ -21,6 +20,14 @@ public class damageLabel extends Label{
         if (time <= 0){
             this.remove();
         }
+    }
+
+    public int getPosX(){
+        return x;
+    }
+
+    public int getPosY(){
+        return y;
     }
     
 }
